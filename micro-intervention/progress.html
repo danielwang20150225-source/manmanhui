@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>今天的进步 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
+  <style>
+    /* 完成页特定样式 */
+    .page-content {
+      padding: 40px 24px 140px;
+      text-align: center;
+    }
+
+    /* 星星装饰 */
+    .stars {
+      font-size: 32px;
+      margin-bottom: 16px;
+      letter-spacing: 8px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    /* 连续天数徽章 */
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #5D4037;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.4s 0.1s ease both;
+      box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3);
+    }
+    .streak-badge .icon {
+      font-size: 16px;
+    }
+
+    /* 标题 */
+    .progress-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      animation: fadeInUp 0.6s 0.15s ease both;
+    }
+
+    /* 进步卡片 */
+    .progress-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      padding: 24px 20px;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.6s 0.2s ease both;
+    }
+
+    .progress-main {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .progress-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* 鼓励标签 */
+    .encourage-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s 0.3s ease both;
+    }
+
+    /* 底部按钮区（极简化，无Tab栏） */
+    .bottom-area {
+      position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeIn 0.6s 0.5s ease both;
+    }
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      padding: 14px 0;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 2px 8px rgba(124,179,66,0.3);
+      transition: all 0.15s;
+    }
+    .btn-primary:active { background: var(--accent-dark); transform: scale(0.98); }
+    .btn-secondary {
+      width: 100%;
+      background: var(--card);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 24px;
+      padding: 13px 0;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-secondary:active { background: var(--accent-light); }
+
+    /* 加载状态 */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 40px;
+    }
+
+    .loading-icon {
+      font-size: 48px;
+      animation: pulse 1.5s infinite;
+    }
+
+    .loading-text {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-top: 20px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* 动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span id="currentTime">9:41</span>
+      <div class="icons">📶 📡 🔋</div>
+    </div>
+
+    <!-- 页面主体 -->
+    <div class="page-content" id="pageContent">
+      <!-- 加载状态 -->
+      <div class="loading-state" id="loadingState">
+        <div class="loading-icon">✨</div>
+        <div class="loading-text">正在生成今天的进步...</div>
+      </div>
+
+      <!-- 进步内容 -->
+      <div id="progressContent" style="display: none;">
+        <div class="stars">✨ ✨ ✨</div>
+        <div class="streak-badge" id="streakBadge">
+          <span class="icon">🔥</span>
+          <span id="streakText">连续1天</span>
+        </div>
+        <h1 class="progress-title">今天的进步</h1>
+        <div class="progress-card">
+          <div class="progress-main" id="progressMain">-</div>
+          <div class="progress-sub" id="progressSub">-</div>
+        </div>
+        <div class="encourage-tag" id="encourageTag">
+          <span>🌱</span>
+          <span>继续保持</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部按钮（极简化，无Tab栏） -->
+    <div class="bottom-area" id="bottomArea" style="display: none;">
+      <button class="btn-primary" onclick="goAgain()">再来一次</button>
+      <button class="btn-secondary" onclick="goHome()">返回任务列表</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+
+  <script>
+    // 微感知文案模板
+    const MICRO_PERCEPTION_TEMPLATES = {
+      '01': {
+        good: ['孩子今天愿意看向你准备的零食了，这是建立呼名反应的第一步。', '孩子开始对你的声音有反应了，继续保持这个好势头。', '今天的眼神接触比昨天多了，继续加油！'],
+        ok: ['孩子今天有一点点反应，慢慢来，每天进步一点点。', '不要着急，孩子的改变需要时间，继续坚持。'],
+        hard: ['今天有点难，但每一次尝试都是进步，明天继续。', '孩子可能今天状态不太好，没关系，明天换个时间试试。']
+      },
+      '02': {
+        good: ['孩子今天愿意把手伸进袖子了，这是穿衣自理的重要一步。', '穿衣时的哭闹减少了，孩子在慢慢适应。', '孩子开始配合你穿衣服了，保持耐心继续练习。'],
+        ok: ['孩子今天有一些配合，继续用温柔的方式引导。', '穿衣需要时间，慢慢来，不要着急。'],
+        hard: ['今天穿衣比较困难，可以试试先让孩子触摸衣服。', '触觉敏感需要时间适应，明天再试试。']
+      },
+      '06': {
+        good: ['孩子在餐桌上的时间比昨天长了，继续保持！', '孩子今天愿意尝试新食物了，进步明显。', '吃饭时的配合度提高了，你的方法很有效。'],
+        ok: ['孩子今天有一点进步，继续保持这个节奏。', '慢慢来，不着急让孩子一下子坐很久。'],
+        hard: ['今天吃饭比较挑战，可以减少进食量、增加餐次试试。', '换个时间和环境再试试，不要放弃。']
+      },
+      '08': {
+        good: ['孩子今天能更好地识别自己的情绪了，这是很大的进步。', '情绪崩溃的次数减少了，继续保持。', '孩子开始尝试用其他方式表达需求了。'],
+        ok: ['孩子在慢慢学习情绪管理，需要更多时间。', '不要着急，情绪技能需要反复练习。'],
+        hard: ['今天情绪挑战比较大，安全第一，下次再试。', '情绪管理需要时间积累，明天继续加油。']
+      },
+      'default': {
+        good: ['孩子今天有进步，继续保持这个好势头。', '每一次练习都在积累，继续加油！', '今天的训练效果不错，明天继续。'],
+        ok: ['慢慢来，孩子的改变需要时间。', '不要着急，每天进步一点点。'],
+        hard: ['今天有点挑战，但每一次尝试都是进步。', '没关系的，明天换个时间再试试。']
+      }
+    };
+
+    // 当前状态
+    let scenarioId = null;
+    let currentDay = 1;
+    let feedbackEmoji = null;
+    let packageCode = null;
+    let consecutiveDays = 1;
+    let encouragementText = '';
+    let urlParams = null;
+
+    // 更新时间
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent =
+        `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 获取微感知文案
+    function getMicroPerception(packageCode, emoji) {
+      if (encouragementText) return encouragementText;
+      const templates = MICRO_PERCEPTION_TEMPLATES[packageCode] || MICRO_PERCEPTION_TEMPLATES['default'];
+      const emojiMap = { '😊': 'good', '😐': 'ok', '😣': 'hard' };
+      const key = emojiMap[emoji] || 'ok';
+      const options = templates[key] || MICRO_PERCEPTION_TEMPLATES['default'][key];
+      return options[Math.floor(Math.random() * options.length)];
+    }
+
+    // 获取鼓励标签
+    function getEncourageTag(emoji) {
+      if (emoji === '😊') return '🌱 继续保持';
+      if (emoji === '😐') return '💪 加油';
+      return '🌟 继续努力';
+    }
+
+    // 渲染进步内容
+    function renderProgress() {
+      const progressMain = getMicroPerception(packageCode, feedbackEmoji);
+      const encourageTag = getEncourageTag(feedbackEmoji);
+
+      // 更新连续天数徽章
+      document.getElementById('streakText').textContent = `连续${consecutiveDays}天`;
+
+      document.getElementById('progressMain').textContent = progressMain;
+      document.getElementById('encourageTag').innerHTML = encourageTag;
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('progressContent').style.display = 'block';
+      document.getElementById('bottomArea').style.display = 'flex';
+    }
+
+    // 获取鼓励语（从URL参数或sessionStorage）
+    function loadEncouragement() {
+      // 从URL参数获取（feedback提交后传递）
+      const urlEnc = urlParams.get('encouragement');
+      if (urlEnc) {
+        encouragementText = decodeURIComponent(urlEnc);
+        return;
+      }
+
+      // 从sessionStorage获取
+      const saved = sessionStorage.getItem('lastEncouragement');
+      if (saved) {
+        encouragementText = saved;
+      }
+
+      // 从sessionStorage获取连续天数
+      const savedProgress = sessionStorage.getItem('trainingProgress');
+      if (savedProgress) {
+        try {
+          const progress = JSON.parse(savedProgress);
+          consecutiveDays = progress.consecutive_days || 1;
+        } catch(e) {}
+      }
+    }
+
+    // 再来一次 - 跳转到历史页
+    function goAgain() {
+      if (scenarioId) {
+        window.location.href = `history.html?id=${scenarioId}`;
+      } else {
+        window.location.href = 'input.html';
+      }
+    }
+
+    // 返回任务列表
+    function goHome() {
+      sessionStorage.removeItem('lastScenarioId');
+      sessionStorage.removeItem('lastDay');
+      sessionStorage.removeItem('lastScenarioTitle');
+      window.location.href = 'index.html';
+    }
+
+    // 初始化
+    function init() {
+      urlParams = new URLSearchParams(window.location.search);
+      scenarioId = urlParams.get('scenario_id');
+      currentDay = parseInt(urlParams.get('day')) || 1;
+      feedbackEmoji = urlParams.get('emoji') || '😊';
+      packageCode = urlParams.get('package_code') || 'default';
+
+      // 从 sessionStorage 获取数据
+      const savedPkg = sessionStorage.getItem('currentPackage');
+      if (savedPkg) {
+        try {
+          const pkg = JSON.parse(savedPkg);
+          packageCode = pkg.package_code || packageCode;
+        } catch(e) {}
+      }
+
+      // 获取鼓励语和连续天数
+      loadEncouragement();
+
+      setTimeout(renderProgress, 300);
+    }
+
+    init();
+  </script>
+</body>
+</html>

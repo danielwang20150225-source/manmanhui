@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>任务列表 - 微干预</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF8F5;
+      --card: #FFFFFF;
+      --primary: #2D5A3D;
+      --accent: #52B788;
+      --accent-soft: #D8EDDF;
+      --warning: #F59E0B;
+      --warning-soft: #FEF3C7;
+      --text: #1A1A1A;
+      --text-secondary: #6B7280;
+      --text-hint: #A1A1AA;
+      --border: #E8E5E0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --radius: 16px;
+      --radius-lg: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 0 20px;
+      padding-bottom: 100px;
+    }
+
+    /* 顶部 */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+    }
+
+    .page-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .add-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--accent);
+      border: none;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-md);
+    }
+
+    .add-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* 任务列表 */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .task-card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .task-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .task-card:active {
+      transform: scale(0.99);
+    }
+
+    /* 进行中 */
+    .task-card.active {
+      border-left: 4px solid var(--accent);
+    }
+
+    .task-card.completed {
+      opacity: 0.7;
+      border-left: 4px solid var(--text-hint);
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .task-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-soft);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .task-card.completed .task-icon {
+      background: var(--border);
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .task-scenario {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .task-goal {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .task-status {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .task-status.active {
+      background: var(--accent-soft);
+      color: var(--primary);
+    }
+
+    .task-status.completed {
+      background: var(--border);
+      color: var(--text-secondary);
+    }
+
+    .task-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 3px;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      min-width: 50px;
+    }
+
+    .task-card.completed .progress-fill {
+      background: var(--text-hint);
+    }
+
+    /* 已完成总结 */
+    .completed-summary {
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .summary-icon {
+      font-size: 14px;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+    }
+
+    .empty-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .empty-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--accent);
+      color: white;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* 底部导航 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 12px 24px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-hint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    .nav-icon {
+      font-size: 22px;
+    }
+
+    /* 入场动画 */
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部 -->
+    <div class="header fade-in">
+      <h1 class="page-title">干预任务</h1>
+      <button class="add-btn" onclick="window.location.href='index-v4.html'">+</button>
+    </div>
+
+    <!-- 进行中的任务 -->
+    <div class="task-list">
+      <div class="task-card active fade-in delay-1" onclick="window.location.href='training-v2.html'">
+        <div class="task-header">
+          <div class="task-icon">👂</div>
+          <div class="task-info">
+            <div class="task-scenario">叫他名字没反应</div>
+            <div class="task-goal">目标：听到名字能回头看你</div>
+          </div>
+          <span class="task-status active">Day 2</span>
+        </div>
+        <div class="task-progress">
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 28%"></div>
+          </div>
+          <span class="progress-label">2/7天</span>
+        </div>
+      </div>
+
+      <div class="task-card active fade-in delay-2" onclick="window.location.href='training-v2.html'">
+        <div class="task-header">
+          <div class="task-icon">👫</div>
+          <div class="task-info">
+            <div class="task-scenario">不愿和其他小朋友玩</div>
+            <div class="task-goal">目标：能参与简单互动</div>
+          </div>
+          <span class="task-status active">Day 4</span>
+        </div>
+        <div class="task-progress">
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 57%"></div>
+          </div>
+          <span class="progress-label">4/7天</span>
+        </div>
+      </div>
+
+      <div class="task-card completed fade-in delay-3" onclick="window.location.href='training-v2.html'">
+        <div class="task-header">
+          <div class="task-icon">👕</div>
+          <div class="task-info">
+            <div class="task-scenario">不肯换新衣服</div>
+            <div class="task-goal">目标：接受新衣服</div>
+          </div>
+          <span class="task-status completed">已完成</span>
+        </div>
+        <div class="task-progress">
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 100%"></div>
+          </div>
+          <span class="progress-label">7/7天</span>
+        </div>
+        <div class="completed-summary">
+          <div class="summary-item">
+            <span class="summary-icon">👍</span>
+            <span>效果明显，孩子现在能接受新衣服了</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <a href="index-v4.html" class="nav-item">
+      <span class="nav-icon">📋</span>
+      <span>今日</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🎯</span>
+      <span>练习</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span>我的</span>
+    </a>
+  </nav>
+</body>
+</html>

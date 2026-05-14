@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>家长干预 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
+  <style>
+    /* 页面内边距：水平16px，垂直20px */
+    .page-content {
+      padding: 20px 16px 80px;
+    }
+
+    /* 任务卡片列表 */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* === 任务卡片（按照规范4.7任务卡片布局）=== */
+    .task-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md); /* 16px */
+      padding: 16px;
+      box-shadow: var(--shadow); /* 0 2px 12px rgba(0,0,0,0.06) */
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 卡片顶部：任务名称+目标说明 */
+    .card-top {
+      margin-bottom: 12px;
+      padding-right: 44px;
+    }
+
+    .task-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-name .emoji {
+      font-size: 20px;
+    }
+
+    .task-goal {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* 卡片中部：最新反馈+更多链接 */
+    .card-middle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+    }
+
+    .feedback-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .feedback-preview .emoji {
+      font-size: 18px;
+    }
+
+    .feedback-preview .text {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .more-link {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* 卡片下部：进度条+进度文字 */
+    .card-bottom {
+      margin-bottom: 12px;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    /* 进入任务按钮 */
+    .enter-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 14px 0;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease-out;
+      box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3);
+    }
+
+    .enter-btn:active {
+      background: var(--accent-dark);
+      transform: scale(0.97);
+      box-shadow: none;
+    }
+
+    /* 右上角删除按钮（始终可见） */
+    .card-delete-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .card-delete-btn .icon {
+      font-size: 18px;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+    }
+
+    .card-delete-btn:hover {
+      background: rgba(229, 115, 115, 0.15);
+    }
+
+    .card-delete-btn:hover .icon {
+      opacity: 1;
+    }
+
+    .card-delete-btn:active {
+      transform: scale(0.9);
+      background: rgba(229, 115, 115, 0.25);
+    }
+
+    /* 新建任务卡片（虚线边框） */
+    .add-card {
+      background: var(--card);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md); /* 16px */
+      padding: 32px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+    }
+
+    .add-card:active {
+      background: var(--accent-light);
+      border-style: solid;
+      border-color: var(--accent);
+    }
+
+    .add-card .icon {
+      font-size: 32px;
+      color: var(--accent);
+    }
+
+    .add-card .text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* 已完成折叠区 */
+    .completed-section {
+      margin-top: 24px;
+    }
+
+    .completed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      cursor: pointer;
+    }
+
+    .completed-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .completed-count {
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    .completed-arrow {
+      font-size: 14px;
+      color: var(--text-hint);
+      transition: transform 0.3s ease;
+    }
+
+    .completed-section.expanded .completed-arrow {
+      transform: rotate(180deg);
+    }
+
+    .completed-list {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 12px;
+    }
+
+    .completed-section.expanded .completed-list {
+      display: flex;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+    }
+
+    .empty-title {
+      font-size: 18px; /* H2 */
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* 加载状态 */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 16px;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .task-card {
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    /* ========== 底部确认面板 ========== */
+    .confirm-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .confirm-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .confirm-panel {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #FFFFFF;
+      border-radius: 20px 20px 0 0;
+      padding: 20px 24px 32px;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 1001;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .confirm-panel.show {
+      transform: translateY(0);
+    }
+
+    .panel-handle {
+      width: 40px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .confirm-content {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .confirm-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .confirm-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .confirm-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      background: var(--bg);
+      color: var(--text-secondary);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 0;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease-out;
+    }
+
+    .btn-cancel:active {
+      background: var(--border);
+    }
+
+    .btn-delete {
+      flex: 1;
+      background: #E57373;
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 14px 0;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease-out;
+      box-shadow: 0 2px 8px rgba(229, 115, 115, 0.3);
+    }
+
+    .btn-delete:active {
+      background: #D32F2F;
+      transform: scale(0.97);
+      box-shadow: none;
+    }
+
+    /* 删除动画 */
+    .card-removing {
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateX(-20px) scale(0.95);
+    }
+
+    /* ========== 给家长的一封信 ========== */
+    .letter-section {
+      margin-top: 24px;
+      padding: 0 4px;
+    }
+
+    .letter-envelope {
+      background: linear-gradient(135deg, #FFFEF7 0%, #FFF9E6 100%);
+      border: 1px solid #F0E6C8;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .letter-header {
+      background: linear-gradient(135deg, #8B7355 0%, #6B5344 100%);
+      color: #FFFFFF;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .letter-header .icon {
+      font-size: 20px;
+    }
+
+    .letter-header .title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .letter-header .subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-left: auto;
+    }
+
+    .letter-body {
+      padding: 16px;
+    }
+
+    .letter-greeting {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .letter-content {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.8;
+    }
+
+    .letter-content p {
+      margin-bottom: 10px;
+      text-align: justify;
+    }
+
+    .letter-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .letter-footer {
+      padding: 12px 16px 16px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .letter-signature {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .letter-signature .name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏：高度44px，深色(#1A1A1A) -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">📶 📡 🔋</div>
+    </div>
+
+    <!-- 页面主体 -->
+    <div class="page-content" id="pageContent">
+      <!-- 加载状态 -->
+      <div class="loading-state" id="loadingState">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">加载中...</div>
+      </div>
+
+      <!-- 任务列表（空状态） -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">开启干预之旅</div>
+        <div class="empty-desc">还没有训练记录<br>点击下方按钮，开始第一个情境训练</div>
+        <button class="btn-primary" onclick="goToInput()" style="max-width: 200px; margin: 0 auto;">
+          添加新情境
+        </button>
+      </div>
+
+      <!-- 任务列表容器 -->
+      <div id="taskListContainer" style="display: none;">
+        <!-- 进行中任务 -->
+        <div class="task-list" id="activeList"></div>
+
+        <!-- 添加新情境卡片 -->
+        <div class="add-card" id="addCardBtn" style="margin-top: 12px;">
+          <span class="icon">➕</span>
+          <span class="text">添加新情境</span>
+        </div>
+
+        <!-- 已完成折叠区 -->
+        <div class="completed-section" id="completedSection">
+          <div class="completed-header" onclick="toggleCompleted()">
+            <span class="completed-title">已完成</span>
+            <span class="completed-count" id="completedCount">0个</span>
+            <span class="completed-arrow">▼</span>
+          </div>
+          <div class="completed-list" id="completedList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部导航：三Tab -->
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="window.location.href='index.html'">
+        <div class="tab-icon">👨‍👩‍👦</div>
+        <span>家长干预</span>
+      </div>
+      <div class="tab-item" onclick="window.location.href='practice.html'">
+        <div class="tab-icon">🧒</div>
+        <span>孩子练习</span>
+      </div>
+      <div class="tab-item" onclick="window.location.href='me.html'">
+        <div class="tab-icon">👤</div>
+        <span>我的</span>
+      </div>
+    </div>
+
+    <!-- 删除确认面板 -->
+    <div class="confirm-overlay" id="confirmOverlay" onclick="hideDeleteConfirm()"></div>
+    <div class="confirm-panel" id="confirmPanel">
+      <div class="panel-handle"></div>
+      <div class="confirm-content">
+        <div class="confirm-icon">⚠️</div>
+        <div class="confirm-title">确定要删除「<span id="taskNameDisplay"></span>」吗？</div>
+        <div class="confirm-desc">删除后训练记录将无法恢复</div>
+      </div>
+      <div class="confirm-actions">
+        <button class="btn-cancel" onclick="hideDeleteConfirm()">取消</button>
+        <button class="btn-delete" id="confirmDeleteBtn">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+
+  <script>
+    // 获取API基础路径
+    function getApiBase() {
+      if (window.location.protocol === 'file:') {
+        return 'http://localhost:8000';
+      }
+      return '';
+    }
+
+    // 跳转到输入页
+    function goToInput() {
+      window.location.href = '/static/input.html';
+    }
+
+    // 添加新情境（带任务限制检查）
+    function handleAddClick() {
+      // 获取当前进行中任务数量
+      const activeCount = document.querySelectorAll('#activeList .card-wrapper').length;
+      if (activeCount >= 3) {
+        alert('最多同时进行3个任务。请先完成或删除现有任务后再添加新任务。');
+        return;
+      }
+      // 如果还有空间，检查添加按钮是否禁用
+      const addBtn = document.getElementById('addCardBtn');
+      if (addBtn && addBtn.classList.contains('disabled')) {
+        return;
+      }
+      goToInput();
+    }
+
+    // 更新添加按钮状态
+    function updateAddButtonState() {
+      const activeCount = document.querySelectorAll('#activeList .card-wrapper').length;
+      const addBtn = document.getElementById('addCardBtn');
+      if (addBtn) {
+        if (activeCount >= 3) {
+          addBtn.classList.add('disabled');
+          addBtn.style.opacity = '0.5';
+          addBtn.style.pointerEvents = 'none';
+        } else {
+          addBtn.classList.remove('disabled');
+          addBtn.style.opacity = '1';
+          addBtn.style.pointerEvents = 'auto';
+        }
+      }
+    }
+
+    // 跳转到训练页面
+    function goToTraining(scenarioId) {
+      window.location.href = `/static/training.html?id=${scenarioId}`;
+    }
+
+    // 跳转到训练记录（历史）
+    function goToHistory(scenarioId) {
+      window.location.href = `/static/history.html?id=${scenarioId}`;
+    }
+
+    // 切换已完成折叠
+    function toggleCompleted() {
+      document.getElementById('completedSection').classList.toggle('expanded');
+    }
+
+    // 加载任务列表
+    async function loadTasks() {
+      try {
+        const response = await fetch(`${getApiBase()}/api/scenarios`);
+        if (!response.ok) {
+          throw new Error('请求失败');
+        }
+
+        const result = await response.json();
+        const scenarios = result.data?.scenarios || [];
+        renderTasks(scenarios);
+      } catch (error) {
+        console.error('加载任务失败:', error);
+        showEmptyState();
+      }
+    }
+
+    // 渲染任务列表
+    function renderTasks(scenarios) {
+      const loadingState = document.getElementById('loadingState');
+
+      loadingState.style.display = 'none';
+
+      // 如果没有任何情境，跳转到欢迎页（首页）
+      if (!scenarios || scenarios.length === 0) {
+        window.location.href = '/static/welcome.html';
+        return;
+      }
+
+      // 分离进行中和已完成
+      const activeTasks = scenarios.filter(s => s.status === 'active');
+      const completedTasks = scenarios.filter(s => s.status === 'completed');
+
+      // 渲染进行中任务（最多显示3个）
+      const activeList = document.getElementById('activeList');
+      const displayActiveTasks = activeTasks.slice(0, 3);  // 只显示前3个
+      activeList.innerHTML = displayActiveTasks.map((task, index) => renderTaskCard(task, index)).join('');
+
+      // 渲染已完成任务
+      if (completedTasks.length > 0) {
+        const completedSection = document.getElementById('completedSection');
+        completedSection.style.display = 'block';
+        document.getElementById('completedCount').textContent = `${completedTasks.length}个`;
+        const completedList = document.getElementById('completedList');
+        completedList.innerHTML = completedTasks.map((task, index) => renderTaskCard(task, index, true)).join('');
+      }
+
+      taskListContainer.style.display = 'block';
+      emptyState.style.display = 'none';
+
+      // 渲染完成后更新添加按钮状态
+      setTimeout(() => {
+        updateAddButtonState();
+      }, 100);
+    }
+
+    // 渲染任务卡片
+    function renderTaskCard(task, index, isCompleted = false) {
+      const currentDay = task.current_day || 1;
+      const totalDays = task.total_days || 14;
+      const progress = Math.round((currentDay / totalDays) * 100);
+
+      // 获取任务名称和emoji
+      const rawTitle = task.scenario_title || task.package_name || '未命名情境';
+      const taskName = rawTitle.replace(/^任务包_\d+_/, '');
+      const emoji = task.scenario_emoji || '📋';
+
+      // 获取目标
+      let goalText = '';
+      try {
+        const goal = typeof task.goal === 'string' ? JSON.parse(task.goal) : task.goal;
+        goalText = goal?.title || '';
+      } catch (e) {}
+
+      // 最新反馈 - emoji对应文案映射
+      const lastFeedback = task.last_feedback || {};
+      const feedbackEmoji = lastFeedback.emoji || '';
+      // emoji文本映射：😊=有点效果, 😐=不太确定, 😣=没效果
+      const emojiTextMap = {
+        '😊': '有点效果',
+        '😐': '不太确定',
+        '😣': '没效果'
+      };
+      const feedbackText = lastFeedback.text || emojiTextMap[feedbackEmoji] || '暂无';
+
+      const cardId = `card-${task.scenario_id || task.id}`;
+
+      return `
+        <div class="card-wrapper" id="${cardId}">
+          <!-- 卡片主体 -->
+          <div class="task-card" style="animation-delay: ${index * 50}ms">
+            <!-- 右上角删除按钮 -->
+            <button class="card-delete-btn" onclick="event.stopPropagation(); showDeleteConfirm('${task.scenario_id || task.id}', '${taskName.replace(/'/g, "\\'")}')" aria-label="删除">
+              <span class="icon">🗑️</span>
+            </button>
+
+            <!-- 卡片顶部：任务名称+目标说明 -->
+            <div class="card-top">
+              <div class="task-name">
+                <span class="emoji">${emoji}</span>
+                <span>${taskName}</span>
+              </div>
+              ${goalText ? `<div class="task-goal">目标：${goalText}</div>` : ''}
+            </div>
+
+            <!-- 卡片中部：最新反馈+更多链接 -->
+            <div class="card-middle">
+              <div class="feedback-preview">
+                <span class="text">记录：${feedbackEmoji || '📝'} ${feedbackText}</span>
+              </div>
+              <a class="more-link" onclick="event.stopPropagation(); goToHistory('${task.scenario_id || task.id}')">更多 →</a>
+            </div>
+
+            <!-- 卡片下部：进度条+进度文字 -->
+            <div class="card-bottom">
+              <div class="progress-text">第${currentDay}天/共${totalDays}天</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+              </div>
+            </div>
+
+            <!-- 进入任务按钮 -->
+            <button class="enter-btn" onclick="event.stopPropagation(); goToTraining('${task.scenario_id || task.id}')">
+              ${isCompleted ? '查看详情' : '继续训练'}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 当前待删除的卡片ID
+    let pendingDeleteId = null;
+
+    // 显示删除确认面板
+    function showDeleteConfirm(scenarioId, taskName) {
+      pendingDeleteId = scenarioId;
+      document.getElementById('taskNameDisplay').textContent = taskName;
+      document.getElementById('confirmOverlay').classList.add('show');
+      document.getElementById('confirmPanel').classList.add('show');
+
+      // 绑定确认删除按钮
+      document.getElementById('confirmDeleteBtn').onclick = function() {
+        executeDelete(pendingDeleteId);
+      };
+    }
+
+    // 隐藏确认面板
+    function hideDeleteConfirm() {
+      document.getElementById('confirmOverlay').classList.remove('show');
+      document.getElementById('confirmPanel').classList.remove('show');
+      pendingDeleteId = null;
+    }
+
+    // 执行删除
+    async function executeDelete(scenarioId) {
+      try {
+        const card = document.getElementById(`card-${scenarioId}`);
+        if (card) {
+          card.classList.add('card-removing');
+        }
+
+        hideDeleteConfirm();
+
+        const response = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}`, {
+          method: 'DELETE'
+        });
+
+        setTimeout(() => {
+          if (response.ok) {
+            loadTasks();
+          } else {
+            alert('删除失败，请重试');
+            if (card) card.classList.remove('card-removing');
+          }
+        }, 300);
+      } catch (error) {
+        alert('删除失败，请重试');
+      }
+    }
+
+    // 显示空状态
+    function showEmptyState() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('taskListContainer').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTasks();
+
+      // 绑定添加按钮点击事件
+      const addCardBtn = document.getElementById('addCardBtn');
+      if (addCardBtn) {
+        addCardBtn.addEventListener('click', handleAddClick);
+      }
+    });
+  </script>
+</body>
+</html>

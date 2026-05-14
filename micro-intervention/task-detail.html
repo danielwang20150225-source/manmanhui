@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>情境详情 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
+  <style>
+    /* 任务详情页特定样式 */
+    .page-header {
+      background: var(--card);
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scenario-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .scenario-emoji {
+      font-size: 32px;
+    }
+
+    .scenario-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .scenario-badge {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-weight: 600;
+    }
+
+    .scenario-badge.active {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .scenario-badge.done {
+      background: #E3F2FD;
+      color: #1976D2;
+    }
+
+    .scenario-badge.abandoned {
+      background: #FFEBEE;
+      color: var(--error);
+    }
+
+    .progress-info {
+      margin-top: 16px;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* 概览数据区 */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* 核心目标卡片 */
+    .goal-card {
+      margin: 0 16px 16px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .goal-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .goal-header .icon {
+      font-size: 16px;
+    }
+
+    .goal-header .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .goal-body {
+      padding: 16px;
+    }
+
+    .goal-main {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    .goal-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* 最近训练记录 */
+    .history-section {
+      padding: 0 16px 16px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .see-all {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .history-emoji {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .history-emoji.good { background: var(--accent-light); }
+    .history-emoji.neutral { background: #FFF8E1; }
+    .history-emoji.bad { background: #FFEBEE; }
+
+    .history-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .history-date {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .history-detail {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-count {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg);
+      padding: 4px 10px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .empty-records {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-hint);
+      font-size: 13px;
+    }
+
+    /* 底部按钮区 */
+    .bottom-section {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: var(--phone-width);
+      background: var(--card);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      border-top: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* 加载状态 */
+    .loading-container {
+      padding: 80px 40px;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* 错误状态 */
+    .error-container {
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .error-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .error-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">📶 📡 🔋</div>
+    </div>
+
+    <!-- 页面主体 -->
+    <div class="page-content" id="pageContent">
+      <!-- 加载状态 -->
+      <div class="loading-container" id="loadingState">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">加载中...</div>
+      </div>
+
+      <!-- 错误状态 -->
+      <div class="error-container" id="errorState" style="display: none;">
+        <div class="error-icon">😢</div>
+        <div class="error-title">加载失败</div>
+        <div class="error-desc">请稍后重试</div>
+        <button class="btn-primary" onclick="loadScenarioDetail()" style="max-width: 200px; margin: 0 auto;">
+          重试
+        </button>
+      </div>
+
+      <!-- 详情内容 -->
+      <div id="detailContent" style="display: none;">
+        <!-- 顶部标题区 -->
+        <div class="page-header">
+          <div class="scenario-title-row">
+            <span class="scenario-emoji" id="scenarioEmoji">📋</span>
+            <span class="scenario-name" id="scenarioName">加载中...</span>
+            <span class="scenario-badge active" id="scenarioBadge">进行中</span>
+          </div>
+          <div class="progress-info">
+            <div class="progress-text" id="progressText">第1天 / 共14天</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill" style="width: 7%"></div>
+            </div>
+            <div class="progress-label">
+              <span id="daysDone">已坚持 1 天</span>
+              <span id="daysLeft">还剩 13 天</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 统计数据 -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-number" id="totalCount">0</div>
+            <div class="stat-label">累计训练次数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-number" id="streakCount">0</div>
+            <div class="stat-label">连续训练天数</div>
+          </div>
+        </div>
+
+        <!-- 核心目标 -->
+        <div class="goal-card">
+          <div class="goal-header">
+            <span class="icon">🎯</span>
+            <span class="title">本阶段核心目标</span>
+          </div>
+          <div class="goal-body">
+            <div class="goal-main" id="goalMain">-</div>
+            <div class="goal-desc" id="goalDesc">-</div>
+          </div>
+        </div>
+
+        <!-- 最近训练 -->
+        <div class="history-section">
+          <div class="section-header">
+            <span class="section-title">最近训练</span>
+            <span class="see-all" id="seeAllBtn" onclick="goToHistory()">查看全部 →</span>
+          </div>
+          <div class="history-list" id="historyList">
+            <div class="empty-records">暂无训练记录</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-section" id="bottomSection" style="display: none;">
+      <button class="btn-primary" id="continueBtn">继续今天的训练 →</button>
+      <button class="btn-secondary" id="historyBtn" onclick="goToHistory()">查看全部训练记录</button>
+      <button class="btn-delete" id="deleteBtn" onclick="confirmDelete()">删除此情境</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+
+  <script>
+    // 获取URL参数
+    function getScenarioId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    // 获取API基础路径
+    function getApiBase() {
+      if (window.location.protocol === 'file:') {
+        return 'http://localhost:8000';
+      }
+      return '';
+    }
+
+    // 从标题提取emoji
+    function getEmojiFromTitle(title) {
+      const emojiMap = {
+        '穿衣': '👕', '社交': '👥', '情绪': '😢', '叫名字': '👂',
+        '眼神': '🙈', '刻板': '🔄', '抗拒': '👕', '哭闹': '😢',
+        '躲避': '🙈', '不安': '😣', '吃饭': '🍽️', '洗手': '🧼',
+        '如厕': '🚽', '刷牙': '🪥', '外出': '🚗', '问题行为': '⚠️'
+      };
+      for (const [key, emoji] of Object.entries(emojiMap)) {
+        if (title.includes(key)) return emoji;
+      }
+      return '📋';
+    }
+
+    // 效果徽章
+    function getEffectBadge(rating) {
+      const map = {
+        '😊': { label: '顺利', class: 'good' },
+        '😐': { label: '一般', class: 'neutral' },
+        '😣': { label: '有点难', class: 'bad' }
+      };
+      return map[rating] || map['😊'];
+    }
+
+    // 格式化日期
+    function formatDate(dateStr, dayNum) {
+      if (!dateStr || dateStr === 'Invalid Date') {
+        return `第${dayNum || '?'}天`;
+      }
+      const date = new Date(dateStr);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+      let dayLabel = '';
+      if (targetDate.getTime() === today.getTime()) {
+        dayLabel = '今天';
+      } else if (targetDate.getTime() === yesterday.getTime()) {
+        dayLabel = '昨天';
+      } else {
+        dayLabel = '前天';
+      }
+
+      return `${dayLabel} · 第${dayNum}天`;
+    }
+
+    // 加载情境详情
+    async function loadScenarioDetail() {
+      const scenarioId = getScenarioId();
+      if (!scenarioId) {
+        showError('缺少情境ID');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}`);
+        if (!response.ok) {
+          throw new Error(`请求失败: ${response.status}`);
+        }
+
+        const result = await response.json();
+        const data = result.data || {};
+        const scenario = data.scenario || data;
+
+        renderScenarioDetail(scenario, data);
+        loadRecentRecords(scenarioId);
+
+      } catch (error) {
+        console.error('加载情境详情失败:', error);
+        showError('加载失败，请重试');
+      }
+    }
+
+    // 加载最近训练记录
+    async function loadRecentRecords(scenarioId) {
+      try {
+        const response = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}/history`);
+        if (!response.ok) throw new Error('请求失败');
+
+        const result = await response.json();
+        const records = (result.data && result.data.history) || [];
+        const recentRecords = records.slice(0, 3);
+        renderRecentRecords(recentRecords);
+
+      } catch (error) {
+        console.error('加载训练记录失败:', error);
+      }
+    }
+
+    // 渲染情境详情
+    function renderScenarioDetail(data, statsData) {
+      // 计算进度
+      const currentDay = data.current_day || 1;
+      const totalDays = data.total_days || 14;
+      const progressPercent = Math.round((currentDay / totalDays) * 100);
+      const daysRemaining = totalDays - currentDay;
+
+      // 统计数据
+      const totalTrainCount = statsData?.total_train_count || data.total_train_count || 0;
+      const consecutiveDays = statsData?.consecutive_days || data.consecutive_days || 0;
+
+      // 解析goal
+      let goalTitle = '';
+      let goalContent = '';
+      try {
+        if (typeof data.goal === 'string') {
+          const goalObj = JSON.parse(data.goal);
+          goalTitle = goalObj.title || '';
+          goalContent = goalObj.content || '';
+        } else if (data.goal && data.goal.title) {
+          goalTitle = data.goal.title;
+          goalContent = data.goal.content;
+        }
+      } catch (e) {
+        console.error('解析goal失败:', e);
+      }
+
+      // 状态badge
+      let statusText = '进行中';
+      let statusClass = 'active';
+      if (data.status === 'completed') {
+        statusText = '已完成';
+        statusClass = 'done';
+      } else if (data.status === 'abandoned') {
+        statusText = '已放弃';
+        statusClass = 'abandoned';
+      }
+
+      // 标题和emoji
+      const rawTitle = data.scenario_title || data.package_name || '未命名情境';
+      const scenarioTitle = rawTitle.replace(/^任务包_\d+_/, '');
+      const scenarioEmoji = data.scenario_emoji || getEmojiFromTitle(scenarioTitle);
+
+      // 更新页面元素
+      document.getElementById('scenarioEmoji').textContent = scenarioEmoji;
+      document.getElementById('scenarioName').textContent = scenarioTitle;
+      document.getElementById('scenarioBadge').textContent = statusText;
+      document.getElementById('scenarioBadge').className = `scenario-badge ${statusClass}`;
+      document.getElementById('progressText').textContent = `第${currentDay}天 / 共${totalDays}天`;
+      document.getElementById('progressFill').style.width = `${progressPercent}%`;
+      document.getElementById('daysDone').textContent = `已坚持 ${currentDay} 天`;
+      document.getElementById('daysLeft').textContent = `还剩 ${daysRemaining} 天`;
+
+      document.getElementById('totalCount').textContent = totalTrainCount;
+      document.getElementById('streakCount').textContent = consecutiveDays;
+
+      document.getElementById('goalMain').textContent = goalTitle || '暂无目标';
+      document.getElementById('goalDesc').textContent = goalContent || '暂无描述';
+
+      // 更新按钮状态
+      const continueBtn = document.getElementById('continueBtn');
+      if (data.status === 'completed') {
+        continueBtn.textContent = '已完成全部训练';
+        continueBtn.disabled = true;
+        continueBtn.style.background = '#E0E0E0';
+        continueBtn.style.boxShadow = 'none';
+      } else {
+        continueBtn.textContent = '继续今天的训练 →';
+        continueBtn.onclick = () => {
+          window.location.href = `training.html?id=${data.id || getScenarioId()}`;
+        };
+      }
+
+      // 显示内容
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'none';
+      document.getElementById('detailContent').style.display = 'block';
+      document.getElementById('bottomSection').style.display = 'flex';
+    }
+
+    // 渲染最近训练记录
+    function renderRecentRecords(records) {
+      const historyList = document.getElementById('historyList');
+
+      if (!records || records.length === 0) {
+        historyList.innerHTML = '<div class="empty-records">暂无训练记录</div>';
+        return;
+      }
+
+      historyList.innerHTML = records.map(record => {
+        const effect = getEffectBadge(record.emoji);
+        const dateStr = formatDate(record.created_at || record.date || '', record.day || 1);
+        const detail = record.text || record.analysis || '无备注';
+        const trainCount = record.train_count || '1~2次';
+
+        return `
+          <div class="history-item">
+            <div class="history-emoji ${effect.class}">${record.emoji || '😊'}</div>
+            <div class="history-info">
+              <div class="history-date">${dateStr}</div>
+              <div class="history-detail">${detail.substring(0, 40)}${detail.length > 40 ? '...' : ''}</div>
+            </div>
+            <div class="history-count">练了${trainCount}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 显示错误
+    function showError(message) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('detailContent').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+      document.getElementById('bottomSection').style.display = 'flex';
+    }
+
+    // 跳转训练历史
+    function goToHistory() {
+      window.location.href = `history.html?id=${getScenarioId()}`;
+    }
+
+    // 确认删除
+    function confirmDelete() {
+      if (confirm('确定要删除这个情境吗？删除后将无法恢复。')) {
+        if (confirm('再次确认：删除后所有训练记录都将清除，确定继续？')) {
+          executeDelete();
+        }
+      }
+    }
+
+    // 执行删除
+    async function executeDelete() {
+      const scenarioId = getScenarioId();
+      if (!scenarioId) return;
+
+      try {
+        const response = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          alert('情境已删除');
+          window.location.href = 'index.html';
+        } else {
+          alert('删除失败，请重试');
+        }
+      } catch (error) {
+        alert('删除失败，请重试');
+      }
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', loadScenarioDetail);
+  </script>
+</body>
+</html>

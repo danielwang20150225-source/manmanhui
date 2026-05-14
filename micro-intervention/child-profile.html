@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>孩子档案 - 微干预</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #F7F4F0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+    .phone-wrapper {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: #F7F4F0;
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 1px solid #E8E4E0;
+    }
+    /* 状态栏 */
+    .status-bar {
+      height: 44px;
+      background: #2D2D2D;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-bar .icons { display: flex; gap: 6px; }
+    /* 顶部导航 */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E8E4E0;
+    }
+    .back-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background 0.2s;
+      font-size: 18px; color: #2D2D2D;
+    }
+    .back-btn:active { background: #F0F0F0; }
+    .header-title {
+      flex: 1; text-align: center;
+      font-size: 17px; font-weight: 600; color: #2D2D2D;
+      margin-right: 32px;
+    }
+    /* 页面主体 */
+    .page-content {
+      padding: 20px 0 32px;
+    }
+    /* 档案卡片 */
+    .profile-card {
+      background: #FFFFFF;
+      margin: 0 16px 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .profile-header {
+      background: #E8F5E9;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .profile-avatar {
+      width: 60px; height: 60px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .profile-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2D2D2D;
+      margin-bottom: 4px;
+    }
+    .profile-meta {
+      font-size: 13px;
+      color: #6B6B6B;
+    }
+    /* 档案表单 */
+    .form-section {
+      padding: 4px 0;
+    }
+    .form-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .form-item:last-child { border-bottom: none; }
+    .form-label {
+      font-size: 15px;
+      color: #2D2D2D;
+      width: 80px;
+      flex-shrink: 0;
+    }
+    .form-value {
+      flex: 1;
+    }
+    .form-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #2D2D2D;
+      font-family: inherit;
+    }
+    .form-input::placeholder { color: #C8C8C8; }
+    .form-select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #2D2D2D;
+      font-family: inherit;
+      appearance: none;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: #ADADAD;
+      padding: 0 20px 12px;
+      line-height: 1.5;
+    }
+    /* 底部按钮 */
+    .bottom-area {
+      padding: 8px 20px 0;
+    }
+    .save-btn {
+      width: 100%;
+      background: #7CB342;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 24px;
+      padding: 15px 0;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 2px 8px rgba(124,179,66,0.3);
+      transition: all 0.2s;
+    }
+    .save-btn:active { background: #6a9a38; transform: scale(0.98); }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons"><span>📶</span><span>🔋</span></div>
+    </div>
+    <div class="header">
+      <div class="back-btn" onclick="window.location.href='me.html'">←</div>
+      <div class="header-title">孩子档案</div>
+    </div>
+    <div class="page-content">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">👶</div>
+          <div>
+            <div class="profile-name" id="displayName">小星</div>
+            <div class="profile-meta" id="displayAge">11岁</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-item">
+            <div class="form-label">姓名</div>
+            <div class="form-value">
+              <input class="form-input" type="text" id="inputName" value="小星" placeholder="孩子的名字或昵称">
+            </div>
+          </div>
+          <div class="form-item">
+            <div class="form-label">年龄</div>
+            <div class="form-value">
+              <select class="form-select" id="inputAge">
+                <option value="3" selected>3岁</option>
+                <option value="4">4岁</option>
+                <option value="5">5岁</option>
+                <option value="6">6岁</option>
+                <option value="7">7岁</option>
+                <option value="8">8岁</option>
+                <option value="9">9岁</option>
+                <option value="10">10岁</option>
+                <option value="11">11岁</option>
+                <option value="12">12岁</option>
+                <option value="13">13岁</option>
+                <option value="14">14岁</option>
+                <option value="15">15岁</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-item">
+            <div class="form-label">性别</div>
+            <div class="form-value">
+              <select class="form-select" id="inputGender">
+                <option value="boy" selected>男孩</option>
+                <option value="girl">女孩</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-hint">
+        这些信息仅用于提供更精准的干预建议，不会分享给任何人。
+      </div>
+    </div>
+    <div class="bottom-area">
+      <button class="save-btn" onclick="saveProfile()">保存</button>
+    </div>
+  </div>
+  <script>
+    const nameInput = document.getElementById('inputName');
+    const ageSelect = document.getElementById('inputAge');
+
+    nameInput.addEventListener('input', updateDisplay);
+    ageSelect.addEventListener('change', updateDisplay);
+
+    function updateDisplay() {
+      const name = nameInput.value || '未命名';
+      const age = ageSelect.value;
+      document.getElementById('displayName').textContent = name;
+      document.getElementById('displayAge').textContent = age + '岁';
+    }
+
+    function saveProfile() {
+      console.log('保存档案:', {
+        name: nameInput.value,
+        age: ageSelect.value,
+        gender: document.getElementById('inputGender').value
+      });
+      window.location.href = 'me.html';
+    }
+  </script>
+</body>
+</html>

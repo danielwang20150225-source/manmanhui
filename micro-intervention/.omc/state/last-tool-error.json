@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"python D:/temp/test-training.py 2>&1\",\"description\":\"Run training page test\"}",
+  "error": "Exit code 1\n  File \"D:\\temp\\test-training.py\", line 37\r\n    store_state = page.evaluate(\"() => {\r\n                                ^\r\nSyntaxError: unterminated string literal (detected at line 37)",
+  "timestamp": "2026-05-13T16:47:34.309Z",
+  "retry_count": 1
+}

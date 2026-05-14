@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>记录今日训练 - 微干预</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #F7F4F0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+    .phone-wrapper {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: #F7F4F0;
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 1px solid #E8E4E0;
+    }
+    /* 状态栏 */
+    .status-bar {
+      height: 44px;
+      background: #1A1A1A;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-bar .icons { display: flex; gap: 6px; }
+    /* 顶部导航 */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E8E4E0;
+    }
+    .back-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background 0.2s;
+      font-size: 18px; color: #2D2D2D;
+    }
+    .back-btn:active { background: #F0F0F0; }
+    .header-title {
+      flex: 1; text-align: center;
+      font-size: 17px; font-weight: 600; color: #2D2D2D;
+      margin-right: 32px;
+    }
+    /* 页面主体 */
+    .page-content {
+      padding: 24px 20px 140px;
+    }
+    /* 完成标题区 */
+    .done-header {
+      text-align: center;
+      padding: 32px 0 28px;
+    }
+    .done-icon {
+      width: 72px; height: 72px;
+      background: #E8F5E9;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 36px;
+    }
+    .done-title {
+      font-size: 20px; font-weight: bold; color: #2D2D2D; margin-bottom: 6px;
+    }
+    .done-subtitle {
+      font-size: 14px; color: #6B6B6B;
+    }
+    /* 反馈卡片 */
+    .feedback-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+    .feedback-section { margin-bottom: 24px; }
+    .feedback-section:last-child { margin-bottom: 0; }
+    .feedback-label {
+      font-size: 13px; color: #6B6B6B; margin-bottom: 12px;
+    }
+    /* F-31: 效果选择器 EffectPicker */
+    .emoji-row {
+      display: flex;
+      gap: 12px;
+    }
+    .emoji-btn {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px;
+      padding: 14px 8px;
+      background: #F7F4F0;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .emoji-btn:active { transform: scale(0.96); }
+    .emoji-btn.selected {
+      border-color: #7CB342;
+      background: #E8F5E9;
+    }
+    .emoji-btn .emoji { font-size: 28px; }
+    .emoji-btn .label { font-size: 13px; color: #2D2D2D; font-weight: 500; }
+    .emoji-btn.selected .label { color: #7CB342; font-weight: 600; }
+    
+    /* F-32: 训练次数选择器 TrainCountPicker (+/-按钮) */
+    .count-picker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: #F7F4F0;
+      border-radius: 12px;
+    }
+    .count-btn {
+      width: 44px;
+      height: 44px;
+      background: #FFFFFF;
+      border: 2px solid #E8E4E0;
+      border-radius: 50%;
+      font-size: 20px;
+      color: #7CB342;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .count-btn:active {
+      transform: scale(0.95);
+      background: #E8F5E9;
+      border-color: #7CB342;
+    }
+    .count-btn.disabled {
+      color: #ADADAD;
+      cursor: not-allowed;
+    }
+    .count-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2D2D2D;
+      min-width: 48px;
+      text-align: center;
+    }
+    .count-label {
+      font-size: 13px;
+      color: #6B6B6B;
+      text-align: center;
+    }
+    
+    /* F-33: 备注Textarea */
+    .text-input {
+      width: 100%;
+      min-height: 88px;
+      background: #F7F4F0;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px; color: #2D2D2D;
+      resize: none; outline: none; font-family: inherit;
+      line-height: 1.6;
+      transition: border-color 0.2s;
+    }
+    .text-input::placeholder { color: #ADADAD; }
+    .text-input:focus { border-color: #7CB342; background: #FFFFFF; }
+    .input-hint { font-size: 12px; color: #ADADAD; margin-top: 6px; display: flex; justify-content: space-between; }
+    .input-hint.over-limit { color: #E57373; }
+    
+    /* 底部按钮 */
+    .bottom-section {
+      position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: #FFFFFF;
+      padding: 12px 20px 24px;
+      border-top: 1px solid #E8E4E0;
+    }
+    .btn-primary {
+      width: 100%;
+      background: #7CB342; color: #FFFFFF;
+      border: none; border-radius: 24px;
+      padding: 16px 0;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3);
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-primary:active { background: #6a9a38; transform: scale(0.98); }
+    .btn-primary:disabled {
+      background: #E0E0E0;
+      color: #ADADAD;
+      cursor: not-allowed; transform: none; box-shadow: none;
+    }
+    .submit-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #ADADAD;
+      margin-bottom: 8px;
+    }
+    .submit-hint.hidden { display: none; }
+    
+    /* Loading state */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(247, 244, 240, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .loading-overlay.show { opacity: 1; pointer-events: all; }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #E8E4E0;
+      border-top-color: #7CB342;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(45, 45, 45, 0.9);
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      max-width: 320px;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time" id="currentTime">9:41</span>
+      <div class="icons"><span>📶</span><span>🔋</span></div>
+    </div>
+
+    <!-- 顶部导航 -->
+    <div class="header">
+      <div class="back-btn" onclick="goBack()">←</div>
+      <div class="header-title">记录今日训练</div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 页面主体 -->
+    <div class="page-content">
+
+      <!-- 完成提示 -->
+      <div class="done-header">
+        <div class="done-icon">🌱</div>
+        <div class="done-title" id="doneTitle">第1天训练已完成</div>
+        <div class="done-subtitle" id="doneSubtitle">-</div>
+      </div>
+
+      <!-- 反馈表单 -->
+      <div class="feedback-card">
+
+        <!-- F-31: 效果选择器 EffectPicker（😊😐😣三选一） -->
+        <div class="feedback-section">
+          <div class="feedback-label">今天效果怎么样？</div>
+          <div class="emoji-row">
+            <div class="emoji-btn" onclick="selectEmoji(this, 'good')">
+              <span class="emoji">😊</span>
+              <span class="label">有点效果</span>
+            </div>
+            <div class="emoji-btn" onclick="selectEmoji(this, 'ok')">
+              <span class="emoji">😐</span>
+              <span class="label">不太确定</span>
+            </div>
+            <div class="emoji-btn" onclick="selectEmoji(this, 'hard')">
+              <span class="emoji">😣</span>
+              <span class="label">没效果</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- F-32: 训练次数选择器 TrainCountPicker (+/-按钮) -->
+        <div class="feedback-section">
+          <div class="feedback-label">今天练了几次？</div>
+          <div class="count-picker" id="countPicker">
+            <button class="count-btn" id="countMinus" onclick="decreaseCount()">−</button>
+            <div>
+              <div class="count-value" id="countValue">0</div>
+              <div class="count-label">次</div>
+            </div>
+            <button class="count-btn" id="countPlus" onclick="increaseCount()">+</button>
+          </div>
+        </div>
+
+        <!-- F-33: 备注Textarea（选填，最长500字） -->
+        <div class="feedback-section">
+          <div class="feedback-label">想记录什么？（选填）</div>
+          <textarea class="text-input" id="noteInput" maxlength="500" placeholder="比如：今天在超市门口练习，孩子哭了两次，但最后主动伸了手..."></textarea>
+          <div class="input-hint" id="noteHint">
+            <span>写下来有助于发现规律</span>
+            <span id="charCount">0/500</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Loading 遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 底部按钮 - F-34: 按钮disabled逻辑 + hint提示 -->
+    <div class="bottom-section">
+      <div class="submit-hint" id="submitHint">请先选择效果和训练次数</div>
+      <button class="btn-primary" id="submitBtn" onclick="submitFeedback()" disabled>
+        <span>提交反馈</span>
+        <span>✓</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 引入路由守卫和状态管理 -->
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/store/userStore.js"></script>
+  <script src="js/store/trainingStore.js"></script>
+
+  <script>
+    // 最大备注字数 - F-33
+    const MAX_NOTE_LENGTH = 500;
+
+    // 当前状态
+    let selectedEmoji = null;  // 'good' | 'ok' | 'hard'
+    let selectedCount = 0;  // 训练次数（数字）
+    let scenarioId = null;
+    let currentDay = 1;
+    let scenarioTitle = '-';
+
+    // 更新时间显示
+    function updateTime() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 显示Toast提示
+    function showToast(message, duration = 3000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
+    // F-31: 效果选择器 - 选择emoji
+    function selectEmoji(el, type) {
+      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedEmoji = type;
+      checkReady();
+    }
+
+    // F-32: 训练次数选择器 - 增加
+    function increaseCount() {
+      const max = 20;
+      if (selectedCount < max) {
+        selectedCount++;
+        updateCountDisplay();
+      }
+    }
+
+    // F-32: 训练次数选择器 - 减少
+    function decreaseCount() {
+      if (selectedCount > 0) {
+        selectedCount--;
+        updateCountDisplay();
+      }
+    }
+
+    // F-32: 更新次数显示
+    function updateCountDisplay() {
+      document.getElementById('countValue').textContent = selectedCount;
+      const minusBtn = document.getElementById('countMinus');
+      const plusBtn = document.getElementById('countPlus');
+
+      minusBtn.classList.toggle('disabled', selectedCount <= 0);
+      plusBtn.classList.toggle('disabled', selectedCount >= 20);
+
+      checkReady();
+    }
+
+    // F-34: 检查按钮是否可点击
+    function checkReady() {
+      const btn = document.getElementById('submitBtn');
+      const hint = document.getElementById('submitHint');
+
+      if (selectedEmoji && selectedCount > 0) {
+        btn.disabled = false;
+        btn.style.background = '#7CB342';
+        hint.classList.add('hidden');
+      } else {
+        btn.disabled = true;
+        hint.classList.remove('hidden');
+      }
+    }
+
+    // F-33: 备注字数统计
+    function updateCharCount() {
+      const input = document.getElementById('noteInput');
+      const charCount = document.getElementById('charCount');
+      const hint = document.getElementById('noteHint');
+      const length = input.value.length;
+      
+      charCount.textContent = `${length}/${MAX_NOTE_LENGTH}`;
+      
+      if (length >= MAX_NOTE_LENGTH) {
+        hint.classList.add('over-limit');
+      } else {
+        hint.classList.remove('over-limit');
+      }
+    }
+
+    // 初始化备注输入监听
+    document.getElementById('noteInput').addEventListener('input', updateCharCount);
+
+    // 返回
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    // F-35: 提交反馈 - 调用 POST /api/scenarios/{id}/feedback
+    async function submitFeedback() {
+      if (!selectedEmoji || !selectedCount) {
+        showToast('请选择效果和训练次数');
+        return;
+      }
+
+      // 显示loading
+      document.getElementById('loadingOverlay').classList.add('show');
+      document.getElementById('submitBtn').disabled = true;
+
+      try {
+        const note = document.getElementById('noteInput').value.trim();
+
+        // emoji映射：good=😊, ok=😐, hard=😣，对应文案
+        const emojiMap = { 'good': '😊', 'ok': '😐', 'hard': '😣' };
+        const emojiTextMap = { 'good': '有点效果', 'ok': '不太确定', 'hard': '没效果' };
+        const taskId = trainingStore.getCurrentTaskId() || `${scenarioId}_D${currentDay}_T1`;
+
+        const response = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            scenario_id: scenarioId,
+            task_id: taskId,
+            day: currentDay,
+            emoji: emojiMap[selectedEmoji] || '😐',
+            text: '记录：' + (emojiTextMap[selectedEmoji] || ''),  // 包含"记录："前缀
+            training_record: { train_count: selectedCount }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`请求失败: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('反馈提交成功:', data);
+
+        // F-36: 保存训练记录到localStorage（包含emoji对应的文案）
+        userStore.init();
+        userStore.addTrainingRecord({
+          scenario_id: scenarioId,
+          day: currentDay,
+          emoji: emojiMap[selectedEmoji] || '😐',
+          text: '记录：' + (emojiTextMap[selectedEmoji] || ''),
+          train_count: selectedCount
+        });
+
+        // F-36: 提交成功后跳转进步展示页，传递AI生成的鼓励语
+        showToast('反馈已提交 ✓');
+        setTimeout(() => {
+          // 从API响应中获取鼓励语
+          const aiEncouragement = data?.data?.encouragement_text || '';
+          const params = new URLSearchParams({
+            scenario_id: scenarioId,
+            day: currentDay,
+            emoji: emojiMap[selectedEmoji] || '😊',
+            package_code: sessionStorage.getItem('lastPackageCode') || 'default'
+          });
+          // 传递鼓励语
+          if (aiEncouragement) {
+            params.set('encouragement', encodeURIComponent(aiEncouragement));
+          }
+          window.location.href = 'progress.html?' + params.toString();
+        }, 1000);
+
+      } catch (error) {
+        console.error('提交反馈失败:', error);
+        showToast('提交失败，请重试');
+        document.getElementById('submitBtn').disabled = false;
+      } finally {
+        document.getElementById('loadingOverlay').classList.remove('show');
+      }
+    }
+
+    // 初始化页面
+    function init() {
+      // 滚动到顶部，确保次数选择器可见
+      window.scrollTo(0, 0);
+
+      // 从URL参数获取scenario_id和day
+      const urlParams = new URLSearchParams(window.location.search);
+      scenarioId = urlParams.get('scenario_id') || sessionStorage.getItem('lastScenarioId');
+      currentDay = parseInt(urlParams.get('day')) || parseInt(sessionStorage.getItem('lastDay')) || 1;
+      scenarioTitle = sessionStorage.getItem('lastScenarioTitle') || '训练情境';
+
+      // 更新页面标题
+      document.getElementById('doneTitle').textContent = `第${currentDay}天训练已完成`;
+      
+      // 获取今天的日期
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+      document.getElementById('doneSubtitle').textContent = `${scenarioTitle} · ${dateStr}`;
+
+      // 初始化字符计数
+      updateCharCount();
+    }
+
+    // 点击外部关闭下拉框
+    document.addEventListener('click', function(e) {
+      const picker = document.getElementById('countPicker');
+      const dropdown = document.getElementById('countDropdown');
+      if (picker && !picker.contains(e.target)) {
+        picker.querySelector('.count-trigger')?.classList.remove('open');
+        dropdown?.classList.remove('open');
+      }
+    });
+
+    // 启动
+    init();
+  </script>
+</body>
+</html>

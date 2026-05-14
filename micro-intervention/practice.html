@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>孩子练习 - 微干预</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #F7F4F0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+    .phone-wrapper {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: #F7F4F0;
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 1px solid #E8E4E0;
+    }
+    /* 状态栏 */
+    .status-bar {
+      height: 44px;
+      background: #2D2D2D;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-bar .icons { display: flex; gap: 6px; }
+    /* 顶部导航 */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E8E4E0;
+    }
+    .header-title {
+      flex: 1; text-align: center;
+      font-size: 17px; font-weight: 600; color: #2D2D2D;
+    }
+    /* 页面主体 */
+    .page-content {
+      padding: 0 0 24px;
+    }
+    /* 状态 */
+    .coming-soon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 40px 60px;
+      text-align: center;
+    }
+    .coming-icon {
+      width: 88px; height: 88px;
+      background: #E8F5E9;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px;
+      margin-bottom: 24px;
+    }
+    .coming-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2D2D2D;
+      margin-bottom: 10px;
+    }
+    .coming-desc {
+      font-size: 14px;
+      color: #6B6B6B;
+      line-height: 1.7;
+    }
+    /* Tab栏 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      height: 60px;
+      background: #FFFFFF;
+      border-top: 1px solid #E8E4E0;
+      display: flex; align-items: center; justify-content: space-around;
+      z-index: 100;
+    }
+    .tab-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px;
+      color: #6B6B6B; font-size: 11px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tab-item.active { color: #7CB342; font-weight: bold; }
+    .tab-icon { font-size: 20px; }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons"><span>📶</span><span>🔋</span></div>
+    </div>
+    <div class="header">
+      <div class="header-title">孩子练习</div>
+    </div>
+    <div class="page-content">
+      <div class="coming-soon">
+        <div class="coming-icon">🧒</div>
+        <div class="coming-title">正在开发中...</div>
+        <div class="coming-desc">孩子练习模块正在精心打磨中<br>敬请期待</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item" onclick="window.location.href='index.html'">
+        <span class="tab-icon">👨‍👩‍👦</span>
+        <span>家长干预</span>
+      </div>
+      <div class="tab-item active">
+        <span class="tab-icon">🧒</span>
+        <span>孩子练习</span>
+      </div>
+      <div class="tab-item" onclick="window.location.href='me.html'">
+        <span class="tab-icon">👤</span>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

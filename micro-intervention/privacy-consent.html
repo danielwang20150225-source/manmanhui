@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>用户协议与隐私条款 - 微干预</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #F7F4F0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+    .phone-wrapper {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: #F7F4F0;
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 1px solid #E8E4E0;
+    }
+    /* 状态栏 */
+    .status-bar {
+      height: 44px;
+      background: #2D2D2D;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-bar .icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* 协议内容区 */
+    .consent-content {
+      padding: 24px 20px 120px 20px;
+      min-height: calc(100vh - 44px);
+    }
+    .consent-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2D2D2D;
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 12px;
+    }
+    .consent-section {
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .consent-section h2 {
+      font-size: 17px;
+      font-weight: bold;
+      color: #2D2D2D;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .consent-section p {
+      font-size: 14px;
+      color: #6B6B6B;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .consent-section p:last-child {
+      margin-bottom: 0;
+    }
+    .consent-section ul {
+      font-size: 14px;
+      color: #6B6B6B;
+      line-height: 1.8;
+      padding-left: 20px;
+    }
+    .consent-section ul li {
+      margin-bottom: 6px;
+    }
+    .highlight {
+      color: #7CB342;
+      font-weight: 600;
+    }
+    /* 底部固定按钮区 */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 20px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      background: #FFFFFF;
+      border-top: 1px solid #E8E4E0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+    }
+    .btn-agree {
+      background: #7CB342;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 24px;
+      padding: 16px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      font-family: inherit;
+      width: 100%;
+    }
+    .btn-agree:disabled {
+      background: #E0E0E0;
+      color: #ADADAD;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-agree:not(:disabled):active {
+      background: #6a9a38;
+      transform: scale(0.98);
+    }
+    .btn-disagree {
+      background: transparent;
+      color: #6B6B6B;
+      border: none;
+      padding: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+      text-align: center;
+    }
+    .btn-disagree:active {
+      color: #2D2D2D;
+    }
+    .scroll-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #ADADAD;
+      padding: 8px 0;
+      transition: opacity 0.3s;
+    }
+    .scroll-hint.hidden {
+      opacity: 0;
+    }
+    /* Toast提示 */
+    .toast {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(45, 45, 45, 0.9);
+      color: #FFFFFF;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <span>📶</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <!-- 协议内容区 -->
+    <div class="consent-content" id="consentContent">
+      <div class="consent-title">用户协议与隐私条款</div>
+      
+      <!-- 用户协议 -->
+      <div class="consent-section">
+        <h2>📋 用户协议</h2>
+        <p>欢迎使用<strong>慢慢会·微干预</strong>。本应用是 ASD 儿童家庭干预辅助工具，旨在帮助家长在日常生活中进行科学的行为干预训练。</p>
+        <p>使用本应用即表示您同意以下条款：</p>
+        <ul>
+          <li>本应用仅供家长在专业指导下使用，不能替代专业医疗或行为干预服务</li>
+          <li>您承诺使用本应用进行干预训练时，孩子处于安全、稳定的环境中</li>
+          <li>如孩子出现强烈抗拒、情绪崩溃等情况，应立即停止训练并寻求专业帮助</li>
+          <li>您对使用本应用进行的所有训练活动承担全部责任</li>
+          <li>我们保留随时修改服务条款的权利，修改后的条款在应用内公布后生效</li>
+        </ul>
+      </div>
+
+      <!-- 隐私条款 -->
+      <div class="consent-section">
+        <h2>🔒 隐私条款</h2>
+        <p>我们高度重视您和孩子的隐私安全，承诺采取严格措施保护您的个人信息。</p>
+        <p><strong class="highlight">数据收集：</strong></p>
+        <ul>
+          <li>我们收集您主动输入的情境描述和训练反馈数据</li>
+          <li>孩子的基本信息（姓名、年龄、性别）仅用于生成更精准的干预建议</li>
+          <li>所有数据仅存储在您的设备本地（除您明确同步的数据外）</li>
+        </ul>
+        <p><strong class="highlight">数据使用：</strong></p>
+        <ul>
+          <li>您的数据将仅用于提供个性化的干预训练建议</li>
+          <li>我们会利用汇总数据进行产品优化，但不会识别或关联到您或孩子</li>
+          <li>语音输入数据仅用于本次 AI 分析，不做持久化存储</li>
+        </ul>
+        <p><strong class="highlight">数据安全：</strong></p>
+        <ul>
+          <li>我们采用行业标准的安全技术保护您的数据</li>
+          <li>除法律法规要求外，我们不会与任何第三方分享您的个人信息</li>
+          <li>您可以随时删除本地存储的所有数据</li>
+        </ul>
+      </div>
+
+      <!-- 儿童隐私保护 -->
+      <div class="consent-section">
+        <h2>👶 儿童隐私保护特别说明</h2>
+        <p>我们深知儿童隐私的重要性，因此：</p>
+        <ul>
+          <li>本应用不收集未满 14 周岁儿童的个人敏感信息（除家长主动提供的情况外）</li>
+          <li>儿童信息仅用于应用功能目的，不会用于广告或任何商业目的</li>
+          <li>家长可随时查看、更正或删除孩子的相关信息</li>
+        </ul>
+      </div>
+
+      <!-- 您的权利 -->
+      <div class="consent-section">
+        <h2>✅ 您的权利</h2>
+        <p>作为用户，您拥有以下权利：</p>
+        <ul>
+          <li>了解我们如何收集和使用您的数据</li>
+          <li>随时撤回同意（但不影响撤回前已进行的处理）</li>
+          <li>请求访问、更正或删除您的个人数据</li>
+          <li>对本应用的任何问题提出反馈和投诉</li>
+        </ul>
+      </div>
+
+      <p style="text-align: center; color: #ADADAD; font-size: 12px; margin-top: 24px;">
+        继续使用即表示您已阅读并同意上述所有条款
+      </p>
+    </div>
+
+    <!-- 底部按钮区 -->
+    <div class="bottom-bar">
+      <div class="scroll-hint" id="scrollHint">↑ 请向上滑动阅读完整协议</div>
+      <button class="btn-agree" id="btnAgree" disabled onclick="handleAgree()">同意并开始使用</button>
+      <button class="btn-disagree" onclick="handleDisagree()">不同意</button>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      CONSENT_GIVEN: 'consent_given',
+      CONSENT_TIMESTAMP: 'consent_timestamp'
+    };
+
+    // 检查是否已同意
+    function checkConsent() {
+      const consentGiven = localStorage.getItem(STORAGE_KEYS.CONSENT_GIVEN);
+      if (consentGiven === 'true') {
+        // 已同意，跳转到首页
+        window.location.href = 'index.html';
+      }
+    }
+
+    // 监听滚动，判断是否阅读到底
+    function handleScroll() {
+      const content = document.getElementById('consentContent');
+      const btn = document.getElementById('btnAgree');
+      const hint = document.getElementById('scrollHint');
+      
+      // 计算是否滚动到底部（允许一定误差）
+      const scrollThreshold = 100;
+      const isAtBottom = content.scrollHeight - content.scrollTop - content.clientHeight < scrollThreshold;
+      
+      if (isAtBottom) {
+        btn.disabled = false;
+        hint.classList.add('hidden');
+      } else {
+        btn.disabled = true;
+        hint.classList.remove('hidden');
+      }
+    }
+
+    // 同意并继续
+    function handleAgree() {
+      const timestamp = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEYS.CONSENT_GIVEN, 'true');
+      localStorage.setItem(STORAGE_KEYS.CONSENT_TIMESTAMP, timestamp);
+      
+      // 跳转到首页
+      window.location.href = 'index.html';
+    }
+
+    // 不同意
+    function handleDisagree() {
+      showToast('抱歉，需要同意协议才能使用本应用');
+    }
+
+    // 显示Toast提示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // 初始化
+    function init() {
+      // 检查是否已同意
+      checkConsent();
+      
+      // 监听滚动事件
+      const content = document.getElementById('consentContent');
+      content.addEventListener('scroll', handleScroll);
+      
+      // 初始检查滚动位置
+      handleScroll();
+    }
+
+    init();
+  </script>
+</body>
+</html>

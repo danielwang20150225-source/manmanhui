@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>欢迎 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    .page-content { padding: 20px 16px 140px; }
+    .page-header { text-align: center; padding: 20px 0 16px; }
+    .page-icon { width: 56px; height: 56px; background: #E8F5E9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 28px; }
+    .page-title { font-size: 20px; font-weight: 700; color: #2D2D2D; margin-bottom: 6px; }
+    .page-subtitle { font-size: 13px; color: #6B6B6B; line-height: 1.5; }
+    .input-section { margin-bottom: 12px; }
+    .input-wrapper { position: relative; }
+    .input-field { width: 100%; min-height: 80px; background: #F7F4F0; border: 2px solid #E8E4E0; border-radius: 12px; padding: 14px 48px 14px 16px; font-size: 15px; color: #2D2D2D; resize: none; outline: none; font-family: inherit; line-height: 1.5; transition: border-color 0.15s; box-sizing: border-box; }
+    .input-field::placeholder { color: #ADADAD; }
+    .input-field:focus { border-color: #7CB342; background: #FFFFFF; }
+    .voice-btn { position: absolute; right: 12px; bottom: 12px; width: 32px; height: 32px; background: #E8F5E9; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.15s; }
+    .voice-btn:active { transform: scale(0.9); background: #7CB342; }
+    .quick-tags-section { margin-bottom: 16px; }
+    .tags-label { font-size: 12px; color: #6B6B6B; margin-bottom: 8px; }
+    .quick-tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .quick-tag { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 14px 4px; background: #FFFFFF; border: 2px solid #E8E4E0; border-radius: 12px; cursor: pointer; transition: all 0.15s; }
+    .quick-tag:active { transform: scale(0.96); background: #E8F5E9; border-color: #7CB342; }
+    .quick-tag .tag-icon { font-size: 22px; line-height: 1; }
+    .quick-tag .tag-text { font-size: 11px; font-weight: 500; color: #2D2D2D; text-align: center; }
+    .btn-section { margin-top: 16px; }
+    .btn-primary { width: 100%; background: #7CB342; color: #FFFFFF; border: none; border-radius: 24px; padding: 14px 0; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3); transition: all 0.15s; }
+    .btn-primary:active { background: #689F38; transform: scale(0.98); box-shadow: none; }
+    /* 遮罩层loading */
+    .loading-overlay { position: fixed; inset: 0; background: rgba(247, 244, 240, 0.97); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .loading-overlay.show { opacity: 1; pointer-events: all; }
+    .loading-spinner { width: 48px; height: 48px; border: 4px solid #E8E4E0; border-top-color: #7CB342; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .loading-text { font-size: 15px; color: #6B6B6B; margin-bottom: 8px; }
+    .loading-hint { font-size: 13px; color: #ADADAD; }
+    .loading-error { display: none; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+    .loading-error.show { display: flex; }
+    .loading-success { display: none; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+    .loading-success.show { display: flex; }
+    .error-icon { font-size: 48px; margin-bottom: 8px; }
+    .error-title { font-size: 18px; font-weight: 600; color: #2D2D2D; }
+    .error-desc { font-size: 14px; color: #6B6B6B; }
+    .success-icon { font-size: 48px; margin-bottom: 8px; }
+    .success-title { font-size: 18px; font-weight: 600; color: #2D2D2D; }
+    .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(45, 45, 45, 0.9); color: #FFFFFF; padding: 10px 16px; border-radius: 8px; font-size: 13px; z-index: 300; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; max-width: 280px; text-align: center; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <div class="status-bar"><span class="time" id="currentTime">9:41</span><div class="icons">📶 📡 🔋</div></div>
+    <div class="tab-bar">
+      <div class="tab-item active"><div class="tab-icon">👨‍👩‍👦</div><span>家长干预</span></div>
+      <div class="tab-item" onclick="location.href='practice.html'"><div class="tab-icon">🧒</div><span>孩子练习</span></div>
+      <div class="tab-item" onclick="location.href='me.html'"><div class="tab-icon">👤</div><span>我的</span></div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-icon">🎯</div>
+        <h1 class="page-title">欢迎使用微干预</h1>
+        <p class="page-subtitle">让每一个情境问题<br>能转化成一次有效训练</p>
+      </div>
+      <div class="input-section">
+        <div class="input-wrapper">
+          <textarea class="input-field" id="situationInput" placeholder="描述孩子遇到的一个挑战，比如：叫他名字好几次都没反应..."></textarea>
+          <button class="voice-btn" onclick="startVoiceInput()">🎤</button>
+        </div>
+      </div>
+      <div class="quick-tags-section">
+        <div class="tags-label">或点击最接近的情况：</div>
+        <div class="quick-tags-grid">
+          <div class="quick-tag" onclick="generateFromTag('穿衣抗拒')"><span class="tag-icon">👕</span><span class="tag-text">穿衣抗拒</span></div>
+          <div class="quick-tag" onclick="generateFromTag('外出困难')"><span class="tag-icon">🚗</span><span class="tag-text">外出困难</span></div>
+          <div class="quick-tag" onclick="generateFromTag('呼名不应')"><span class="tag-icon">👂</span><span class="tag-text">呼名不应</span></div>
+          <div class="quick-tag" onclick="generateFromTag('社交回避')"><span class="tag-icon">👥</span><span class="tag-text">社交回避</span></div>
+          <div class="quick-tag" onclick="generateFromTag('情绪崩溃')"><span class="tag-icon">😢</span><span class="tag-text">情绪崩溃</span></div>
+          <div class="quick-tag" onclick="generateFromTag('感官敏感')"><span class="tag-icon">🤯</span><span class="tag-text">感官敏感</span></div>
+        </div>
+      </div>
+      <div class="btn-section">
+        <button class="btn-primary" onclick="handleGenerate()">生成干预任务</button>
+      </div>
+    </div>
+
+    <!-- 遮罩层loading态 -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <!-- 加载中 -->
+      <div id="loadingState">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在分析情境...</div>
+        <div class="loading-hint">稍等片刻</div>
+      </div>
+      <!-- 成功态 -->
+      <div id="successState" class="loading-success">
+        <div class="success-icon">🎯</div>
+        <div class="success-title">方案已生成</div>
+      </div>
+      <!-- 超时/错误态 -->
+      <div id="errorState" class="loading-error">
+        <div class="error-icon">⏰</div>
+        <div class="error-title">生成超时</div>
+        <div class="error-desc">网络不给力，请稍后重试</div>
+        <button class="btn-primary" onclick="retryGenerate()" style="width: auto; padding: 12px 32px;">重新生成</button>
+      </div>
+    </div>
+  </div>
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    function updateTime() {
+      var now = new Date();
+      var h = now.getHours().toString().padStart(2, '0');
+      var m = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('currentTime').textContent = h + ':' + m;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 3000);
+    }
+    function startVoiceInput() { showToast('语音输入功能开发中'); }
+
+    // 显示遮罩层
+    function showLoading() {
+      document.getElementById('loadingState').style.display = 'flex';
+      document.getElementById('successState').classList.remove('show');
+      document.getElementById('errorState').classList.remove('show');
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    // 隐藏遮罩层
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('loadingState').style.display = 'flex';
+      document.getElementById('successState').classList.remove('show');
+      document.getElementById('errorState').classList.remove('show');
+    }
+
+    // 显示成功态
+    function showSuccess() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').classList.remove('show');
+      document.getElementById('successState').classList.add('show');
+    }
+
+    // 显示错误态
+    function showError() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('successState').classList.remove('show');
+      document.getElementById('errorState').classList.add('show');
+    }
+
+    // 重新生成
+    function retryGenerate() {
+      var text = document.getElementById('situationInput').value.trim();
+      if (text) {
+        doGenerate(text);
+      } else {
+        hideLoading();
+      }
+    }
+
+    // 完整生成流程
+    async function doGenerate(text) {
+      showLoading();
+
+      var timeoutId = setTimeout(function() {
+        showError();
+      }, 30000); // 30秒超时
+
+      try {
+        // 1. 识别情境
+        var resp = await fetch(getApiBase() + '/api/scenarios/recognize', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({text: text, source: 'input'})
+        });
+
+        if (!resp.ok) throw new Error('请求失败');
+
+        var data = await resp.json();
+        var id = data.data && data.data.scenario_id;
+
+        if (!id) throw new Error('未获取到情境ID');
+
+        sessionStorage.setItem('lastScenarioId', id);
+        sessionStorage.setItem('lastScenarioTitle', text.substring(0, 20));
+
+        // 2. 生成任务包
+        var genResp = await fetch(getApiBase() + '/api/task-packages/generate', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({scenario_id: id})
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!genResp.ok) throw new Error('生成失败');
+
+        var genData = await genResp.json();
+        if (genData.data) {
+          sessionStorage.setItem('lastGeneratedPackage', JSON.stringify(genData.data));
+        }
+
+        // 显示成功态，然后跳转
+        showSuccess();
+        setTimeout(function() {
+          hideLoading();
+          location.href = 'package.html?scenario_id=' + id;
+        }, 800);
+
+      } catch(e) {
+        console.error('生成失败:', e);
+        clearTimeout(timeoutId);
+        showError();
+      }
+    }
+    function generateFromTag(text) { doGenerate(text); }
+    function handleGenerate() {
+      var text = document.getElementById('situationInput').value.trim();
+      if (text) doGenerate(text);
+    }
+    document.getElementById('situationInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleGenerate();
+      }
+    });
+  </script>
+</body>
+</html>

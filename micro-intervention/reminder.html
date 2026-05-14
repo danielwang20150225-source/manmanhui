@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>训练提醒 - 微干预</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #F7F4F0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+    .phone-wrapper {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: #F7F4F0;
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 1px solid #E8E4E0;
+    }
+    .status-bar {
+      height: 44px;
+      background: #2D2D2D;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-bar .icons { display: flex; gap: 6px; }
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E8E4E0;
+    }
+    .back-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background 0.2s;
+      font-size: 18px; color: #2D2D2D;
+    }
+    .back-btn:active { background: #F0F0F0; }
+    .header-title {
+      flex: 1; text-align: center;
+      font-size: 17px; font-weight: 600; color: #2D2D2D;
+      margin-right: 32px;
+    }
+    .page-content { padding: 20px 16px; }
+    .setting-row {
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .setting-row .label {
+      font-size: 15px; color: #2D2D2D;
+    }
+    .toggle {
+      width: 44px; height: 26px;
+      background: #E8E4E0;
+      border-radius: 13px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle.on { background: #7CB342; }
+    .toggle::after {
+      content: '';
+      width: 22px; height: 22px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .toggle.on::after { transform: translateX(18px); }
+    .time-row {
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .time-row .label { font-size: 15px; color: #2D2D2D; }
+    .time-value {
+      font-size: 15px; color: #7CB342; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons"><span>📶</span><span>🔋</span></div>
+    </div>
+    <div class="header">
+      <div class="back-btn" onclick="window.location.href='me.html'">←</div>
+      <div class="header-title">训练提醒</div>
+    </div>
+    <div class="page-content">
+      <div class="setting-row">
+        <div class="label">每日提醒</div>
+        <div class="toggle on" id="remindToggle" onclick="toggleRemind()"></div>
+      </div>
+      <div class="time-row">
+        <div class="label">提醒时间</div>
+        <div class="time-value" id="timeDisplay">每天 09:00</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleRemind() {
+      document.getElementById('remindToggle').classList.toggle('on');
+    }
+  </script>
+</body>
+</html>

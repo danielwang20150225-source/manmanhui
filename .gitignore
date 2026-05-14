@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 隐私配置
+.env
+*.env.local
+*.env.production
+
+# 数据库
+*.db
+*.sqlite
+
+# 日志
+*.log
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/settings.json
+.claude/scheduled_tasks.json
+
+# 归档目录（包含敏感信息的废弃文件）
+_archive/

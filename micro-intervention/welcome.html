@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>欢迎 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
+  <style>
+    /* 页面内边距 */
+    .page-content {
+      padding: 20px 16px 80px;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* ========== 给家长的一封信 ========== */
+    .letter-section {
+      margin-top: 32px;
+      padding: 0 4px;
+    }
+
+    .letter-envelope {
+      background: linear-gradient(135deg, #FFFEF7 0%, #FFF9E6 100%);
+      border: 1px solid #F0E6C8;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .letter-header {
+      background: linear-gradient(135deg, #8B7355 0%, #6B5344 100%);
+      color: #FFFFFF;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .letter-header .icon {
+      font-size: 20px;
+    }
+
+    .letter-header .title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .letter-header .subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-left: auto;
+    }
+
+    .letter-scroll {
+      max-height: 400px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .letter-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .letter-scroll::-webkit-scrollbar-thumb {
+      background: rgba(139, 115, 85, 0.3);
+      border-radius: 2px;
+    }
+
+    .letter-body {
+      padding: 16px 16px 8px;
+    }
+
+    .letter-greeting {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .letter-content {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.9;
+      text-align: justify;
+    }
+
+    .letter-content p {
+      margin-bottom: 14px;
+    }
+
+    .letter-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .letter-signature-area {
+      padding: 16px 16px 20px;
+    }
+
+    .letter-signature {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    .letter-signature .name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">📶 📡 🔋</div>
+    </div>
+
+    <!-- 页面主体 -->
+    <div class="page-content">
+      <!-- 空状态 + 信 -->
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">开启干预之旅</div>
+        <div class="empty-desc">还没有训练记录<br>点击下方按钮，开始第一个情境训练</div>
+        <button class="btn-primary" onclick="goToInput()" style="max-width: 200px; margin: 0 auto;">
+          添加新情境
+        </button>
+
+        <!-- 给家长的一封信 -->
+        <div class="letter-section">
+          <div class="letter-envelope">
+            <div class="letter-header">
+              <span class="icon">💌</span>
+              <span class="title">给家长的一封信</span>
+              <span class="subtitle">微干预团队</span>
+            </div>
+            <div class="letter-scroll">
+              <div class="letter-body">
+                <div class="letter-greeting">亲爱的家长：</div>
+                <div class="letter-content">
+                  <p>你好，感谢你使用「微干预」。</p>
+                  <p>我是这款产品的作者，也是一名自闭症孩子的父亲。</p>
+                  <p>我的孩子今年11岁了。两岁左右时，我们发现他和同龄孩子有些不一样：缺少眼神交流、发育偏慢、会反复做蝴蝶手，也总是被转动的东西吸引。那时候的我，因为不了解，也因为工作太忙，错过了一些干预时间。</p>
+                  <p>现在回头看，我越来越明白，孩子一旦确诊或疑似，最重要的事情，就是尽早开始长期的干预陪伴。</p>
+                  <p>后来，我离开了工作岗位，把更多时间留给孩子。我慢慢发现，他们其实都很单纯、善良，只是在表达、沟通、理解这个世界时，比别的孩子更困难一些。</p>
+                  <p>这些年，我每天都在陪孩子练习、引导、重复。我也越来越相信，真正对孩子帮助最大的，除了机构，更重要的是家庭里持续不断的陪伴与训练。</p>
+                  <p>可很多家长其实并不知道该怎么做。</p>
+                  <p>不知道练什么，不知道是否有效，也不知道自己有没有做对。慢慢地，人会焦虑、疲惫，很难坚持下去。</p>
+                  <p>于是，我做了「微干预」。</p>
+                  <p>你只需要把孩子生活里真实发生的问题输入进来，AI就会帮你生成简单、具体、能在日常里完成的干预训练。</p>
+                  <p>不需要很复杂，也不用长时间高强度训练。</p>
+                  <p>可能只是每天15到30分钟，在吃饭、玩耍、散步、洗澡这些生活场景里，慢慢帮助孩子建立能力、改善问题。</p>
+                  <p>因为很多成长，本来就是一点点发生的。</p>
+                  <p>多一次回应，多一次表达，多一次主动靠近，背后都是长期坚持的结果。</p>
+                  <p>我希望「微干预」能帮你把干预真正融入生活，也希望在这条很难的路上，你不再只能一个人硬撑着往前走。</p>
+                </div>
+              </div>
+              <div class="letter-signature-area">
+                <div class="letter-signature">
+                  <div class="name">微干预作者</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="tab-bar">
+      <div class="tab-item active">
+        <div class="tab-icon">👨‍👩‍👦</div>
+        <span>家长干预</span>
+      </div>
+      <div class="tab-item" onclick="window.location.href='practice.html'">
+        <div class="tab-icon">🧒</div>
+        <span>孩子练习</span>
+      </div>
+      <div class="tab-item" onclick="window.location.href='me.html'">
+        <div class="tab-icon">👤</div>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function goToInput() {
+      window.location.href = '/static/input.html';
+    }
+  </script>
+</body>
+</html>

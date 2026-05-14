@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>任务已生成 - 微干预</title>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #7CB342;
+      --accent-dark: #689F38;
+      --accent-light: #E8F5E9;
+      --bg: #F7F4F0;
+      --card: #FFFFFF;
+      --border: #E8E4E0;
+      --text-primary: #2D2D2D;
+      --text-secondary: #6B6B6B;
+    }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #E8E4E0;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    /* 手机框架 */
+    .phone-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg);
+      min-height: calc(100vh - 40px);
+      border-radius: 36px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 状态栏 */
+    .status-bar {
+      height: 44px;
+      background: #1A1A1A;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* 页面内容 */
+    .page-content {
+      padding: 16px 16px 80px;
+    }
+
+    /* 返回箭头 */
+    .back-btn {
+      position: absolute;
+      top: 56px;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #6B6B6B;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .back-btn:active { opacity: 0.7; }
+
+    /* 成功提示 - 大标题样式 */
+    .success-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .success-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .success-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* 任务卡片 */
+    .task-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .task-card-header {
+      padding: 20px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .task-emoji {
+      font-size: 40px;
+      line-height: 1;
+    }
+    .task-info {
+      flex: 1;
+    }
+    .task-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .task-goal-label {
+      font-size: 12px;
+      color: #ADADAD;
+      margin-bottom: 4px;
+    }
+    .task-goal {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    /* 状态标签 */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      background: var(--accent-light);
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    /* 进度区域 */
+    .progress-section {
+      padding: 0 16px 20px;
+    }
+    .progress-bar-container {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-dots {
+      display: flex;
+      gap: 4px;
+    }
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .progress-dot.completed {
+      background: var(--accent);
+    }
+    .progress-dot.current {
+      background: var(--accent);
+      transform: scale(1.3);
+    }
+    .progress-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* 底部按钮 - 紧挨任务卡片 */
+    .button-section {
+      margin-bottom: 16px;
+    }
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      padding: 14px 0;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(124, 179, 66, 0.3);
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-primary:active {
+      background: var(--accent-dark);
+      transform: scale(0.98);
+      box-shadow: none;
+    }
+    .btn-secondary {
+      width: 100%;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      border-radius: 24px;
+      padding: 12px 0;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-secondary:active {
+      color: var(--text-primary);
+    }
+
+    /* Tab栏 */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: 64px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 0 16px;
+      z-index: 100;
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .tab-item.active {
+      color: var(--accent);
+    }
+    .tab-item:active { opacity: 0.7; }
+    .tab-icon { font-size: 22px; }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-title { font-size: 16px; color: var(--text-primary); margin-bottom: 8px; }
+    .empty-desc { font-size: 14px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span id="currentTime">9:41</span>
+      <span>📶 📡 🔋</span>
+    </div>
+
+    <!-- 返回箭头 -->
+    <div class="back-btn" onclick="goBack()">←</div>
+
+    <!-- 页面内容 -->
+    <div class="page-content" id="pageContent">
+      <!-- 动态内容 -->
+    </div>
+
+    <!-- Tab栏 -->
+    <div class="tab-bar">
+      <div class="tab-item active">
+        <span class="tab-icon">👨‍👩‍👦</span>
+        <span>家长干预</span>
+      </div>
+      <div class="tab-item" onclick="location.href='practice.html'">
+        <span class="tab-icon">🧒</span>
+        <span>孩子练习</span>
+      </div>
+      <div class="tab-item" onclick="location.href='me.html'">
+        <span class="tab-icon">👤</span>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+
+  <script>
+    let packageData = null;
+
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent =
+        `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    // 去掉前缀的函数
+    function cleanTitle(title) {
+      if (!title) return '训练方案';
+      // 去掉 "任务包_XX_" 前缀
+      return title.replace(/^任务包_\d+_/, '').trim();
+    }
+
+    // 标签到emoji映射
+    const TAG_EMOJI = {
+      '呼名': '👂', '不应': '👂', '穿衣': '👕', '外出': '🚗',
+      '社交': '👥', '情绪': '😢', '感官': '🤯', '如厕': '🚽',
+      '刷牙': '🪥', '吃饭': '🍽️'
+    };
+
+    function getEmoji(title) {
+      for (const [k, v] of Object.entries(TAG_EMOJI)) {
+        if (title.includes(k)) return v;
+      }
+      return '📋';
+    }
+
+    async function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const scenarioId = urlParams.get('scenario_id');
+
+      // 优先从 sessionStorage 获取
+      const saved = sessionStorage.getItem('lastGeneratedPackage');
+      if (saved) {
+        try {
+          packageData = JSON.parse(saved);
+          renderPackage();
+          return;
+        } catch(e) {}
+      }
+
+      // 从 API 获取
+      if (scenarioId) {
+        try {
+          const resp = await fetch(getApiBase() + '/api/scenarios/' + scenarioId);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.data && data.data.scenario) {
+              packageData = data.data.scenario;
+              renderPackage();
+              return;
+            }
+          }
+        } catch(e) {}
+      }
+
+      renderEmpty();
+    }
+
+    function renderPackage() {
+      if (!packageData) {
+        renderEmpty();
+        return;
+      }
+
+      // 获取天数
+      let days = [];
+      let totalDays = 7;
+      let currentDay = 1;
+
+      if (packageData.days_data && packageData.days_data.days) {
+        days = packageData.days_data.days;
+        totalDays = days.length;
+      } else if (packageData.days && packageData.days.length) {
+        days = packageData.days;
+        totalDays = days.length;
+      }
+      if (packageData.current_day) {
+        currentDay = packageData.current_day;
+      }
+
+      // 获取名称（去掉前缀）和目标
+      const rawName = packageData.package_name || packageData.scenario_title || '训练方案';
+      const name = cleanTitle(rawName);
+      const emoji = packageData.scenario_emoji || getEmoji(name);
+
+      let goal = '完成每日训练目标';
+      if (days[0] && days[0].goal) {
+        if (typeof days[0].goal === 'string') {
+          goal = days[0].goal;
+        } else {
+          goal = days[0].goal.title || days[0].goal.description || goal;
+        }
+      }
+
+      // 计算进度
+      const progressPercent = Math.max(0, Math.min(100, ((currentDay - 1) / totalDays) * 100));
+
+      // 生成圆点（最多14个）
+      const maxDots = Math.min(totalDays, 14);
+      let dotsHtml = '';
+      for (let i = 1; i <= maxDots; i++) {
+        let cls = 'progress-dot';
+        if (i < currentDay) cls += ' completed';
+        if (i === currentDay) cls += ' current';
+        dotsHtml += `<div class="${cls}"></div>`;
+      }
+
+      document.getElementById('pageContent').innerHTML = `
+        <!-- 成功提示 - 大标题 -->
+        <div class="success-banner">
+          <div class="success-icon">✓</div>
+          <span class="success-text">任务已生成</span>
+        </div>
+
+        <!-- 任务卡片 -->
+        <div class="task-card">
+          <div class="task-card-header">
+            <span class="task-emoji">${emoji}</span>
+            <div class="task-info">
+              <div class="task-name">${name}</div>
+              <div class="task-goal-label">目标</div>
+              <div class="task-goal">${goal}</div>
+              <div class="status-tag">📅 ${totalDays}天训练计划</div>
+            </div>
+          </div>
+          <div class="progress-section">
+            <div class="progress-bar-container">
+              <div class="progress-bar" style="width: ${progressPercent}%"></div>
+            </div>
+            <div class="progress-info">
+              <div class="progress-dots">${dotsHtml}</div>
+              <div class="progress-text">第${currentDay}天 / 共${totalDays}天</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部按钮 - 紧挨任务卡片 -->
+        <div class="button-section">
+          <button class="btn-primary" onclick="startTraining()">开始训练</button>
+          <button class="btn-secondary" onclick="goBack()">返回任务列表</button>
+        </div>
+      `;
+    }
+
+    function renderEmpty() {
+      document.getElementById('pageContent').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">暂无任务数据</div>
+          <div class="empty-desc">请先创建训练方案</div>
+        </div>
+        <div class="button-section">
+          <button class="btn-primary" onclick="window.location.href='input.html'">去创建</button>
+          <button class="btn-secondary" onclick="goBack()">返回</button>
+        </div>
+      `;
+    }
+
+    function startTraining() {
+      if (!packageData) return;
+      sessionStorage.setItem('currentPackage', JSON.stringify(packageData));
+      const sid = packageData.scenario_id || sessionStorage.getItem('lastScenarioId');
+      const day = packageData.current_day || 1;
+      // 跳转到每日训练页
+      window.location.href = `training.html?scenario_id=${sid}&day=${day}`;
+    }
+
+    init();
+  </script>
+</body>
+</html>

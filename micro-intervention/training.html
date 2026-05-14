@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>微干预 - 每日训练</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg: #F7F4F0;
+      --card: #FFFFFF;
+      --accent: #7CB342;
+      --accent-dark: #689F38;
+      --text-primary: #2D2D2D;
+      --text-secondary: #6B6B6B;
+      --border: #E8E4E0;
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
+      --radius: 12px;
+      --radius-lg: 24px;
+    }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #F7F4F0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 0;
+    }
+
+    .phone-wrapper {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      background: #1A1A1A;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+    .status-icons { display: flex; gap: 4px; font-size: 12px; }
+
+    /* Top Nav */
+    .top-nav {
+      height: 52px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .back-btn {
+      width: 36px; height: 36px;
+      border: none; background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; font-size: 18px;
+      color: var(--text-primary);
+      transition: background 0.15s;
+    }
+    .back-btn:active { background: var(--border); }
+    .nav-title {
+      font-size: 16px; font-weight: 600;
+      color: var(--text-primary); flex: 1;
+    }
+    .nav-title span { color: var(--text-secondary); font-weight: 400; font-size: 14px; }
+
+    /* Progress Bar - F-25: 当日进度条 */
+    .progress-bar-wrap {
+      height: 6px; background: var(--border); position: relative;
+    }
+    .progress-bar-fill {
+      height: 100%; background: var(--accent);
+      border-radius: 0 3px 3px 0;
+      transition: width 0.4s ease;
+    }
+
+    /* Page Content */
+    .page-content {
+      padding: 16px 16px 140px;
+    }
+
+    /* 观察重点提示气泡 */
+    .observe-card {
+      background: #FFF8E1;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-top: 24px; /* 与上方步骤模块的间距 */
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      animation: fadeInUp 0.4s 0.2s ease both;
+    }
+    .observe-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .observe-label {
+      font-size: 12px;
+      color: #F57C00;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .observe-text { font-size: 14px; color: #8D6E63; line-height: 1.6; }
+
+    /* Loading State */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .loading-icon { font-size: 40px; animation: pulse 1.5s infinite; }
+    .loading-text { font-size: 14px; color: var(--text-secondary); margin-top: 16px; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Error State */
+    .error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .error-icon { font-size: 48px; margin-bottom: 16px; }
+    .error-title { font-size: 16px; font-weight: bold; color: var(--text-primary); margin-bottom: 8px; }
+    .error-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+    .btn-retry {
+      background: #FFFFFF;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 24px;
+      padding: 12px 24px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+
+    /* F-26: 今日目标卡片 GoalCard */
+    .goal-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 18px 16px;
+      margin-bottom: 12px;
+      animation: fadeInUp 0.4s ease both;
+    }
+    .goal-label {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text-secondary);
+      font-weight: 500; margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .goal-label .icon { font-size: 14px; }
+    .goal-text {
+      font-size: 17px; font-weight: 600;
+      color: var(--text-primary); line-height: 1.5;
+    }
+
+    /* Tip Card */
+    .tip-card {
+      background: #FFF8F0;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex; align-items: flex-start; gap: 10px;
+      animation: fadeInUp 0.4s 0.1s ease both;
+    }
+    .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .tip-text { font-size: 14px; color: #8D6E63; line-height: 1.6; }
+
+    /* Steps Section */
+    .steps-section { animation: fadeInUp 0.4s 0.15s ease both; }
+    .steps-label {
+      font-size: 12px; color: var(--text-secondary);
+      font-weight: 500; margin-bottom: 10px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .step-list { display: flex; flex-direction: column; gap: 10px; }
+
+    /* F-24: 步骤卡片组件 StepCard */
+    .step-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: flex; align-items: flex-start; gap: 14px;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      background: #E8F5E9;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      color: var(--accent); flex-shrink: 0;
+    }
+    .step-card.completed .step-num {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-body { flex: 1; }
+    .step-action {
+      font-size: 15px; font-weight: 600;
+      color: var(--text-primary); margin-bottom: 4px; line-height: 1.4;
+    }
+    .step-desc {
+      font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+    }
+    .step-duration {
+      font-size: 12px; color: var(--text-secondary);
+      margin-top: 6px; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* Bottom Button */
+    .bottom-area {
+      position: fixed;
+      bottom: 60px; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: #FFFFFF;
+      padding: 12px 16px 20px;
+      border-top: 1px solid var(--border);
+      z-index: 99;
+    }
+    .done-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 16px 0;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 4px 12px rgba(124,179,66,0.35);
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .done-btn:active { background: var(--accent-dark); transform: scale(0.98); }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Tab Bar */
+    .tab-bar {
+      position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      height: 60px;
+      background: #FFFFFF;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 100;
+    }
+    .tab-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px; cursor: pointer;
+      padding: 8px 0 4px;
+      color: var(--text-secondary);
+      font-size: 11px; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .tab-item.active { color: var(--accent); }
+    .tab-icon { font-size: 20px; line-height: 1; }
+
+    /* Step Navigation */
+    .step-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .step-nav-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .step-nav-btn.prev {
+      background: var(--card);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .step-nav-btn.next {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-nav-btn:active { transform: scale(0.98); }
+  </style>
+</head>
+<body>
+
+<div class="phone-wrapper">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span id="currentTime">9:41</span>
+    <div class="status-icons">📶 📡 🔋</div>
+  </div>
+
+  <!-- Top Nav -->
+  <div class="top-nav">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="nav-title" id="navTitle">今日任务</div>
+  </div>
+
+  <!-- Progress Bar - F-25 当日进度条 -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="dayProgressBar"></div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="page-content" id="pageContent">
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState" style="display:none;">
+      <div class="loading-icon">⏳</div>
+      <div class="loading-text">加载中...</div>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-state" id="errorState" style="display:none;">
+      <div class="error-icon">😢</div>
+      <div class="error-title">加载失败</div>
+      <div class="error-desc" id="errorDesc">网络错误，请稍后重试</div>
+      <button class="btn-retry" onclick="retryLoad()">重新加载</button>
+    </div>
+
+    <!-- Training Content (shown when loaded) -->
+    <div id="trainingContent" style="display:none;">
+
+      <!-- F-26: 今日目标卡片 GoalCard -->
+      <div class="goal-card" id="goalCard">
+        <div class="goal-label">
+          <span class="icon">🎯</span>
+          <span>今日目标</span>
+        </div>
+        <div class="goal-text" id="todayGoal">-</div>
+        <div class="goal-tip" id="todayTip" style="font-size:12px;color:#8D6E63;margin-top:4px;">💡 在孩子心情好的时候练习</div>
+      </div>
+
+      <!-- F-24: 步骤卡片组件 StepCard -->
+      <div class="steps-section">
+        <div class="steps-label">📋 今日步骤 (<span id="stepCount">0</span>步)</div>
+        <div class="step-list" id="stepList">
+          <!-- Steps will be rendered here -->
+        </div>
+      </div>
+
+      <!-- 观察重点提示气泡（步骤下面） -->
+      <div class="observe-card" id="observeCard">
+        <div class="observe-icon">💡</div>
+        <div>
+          <div class="observe-label">重点观察</div>
+          <div class="observe-text" id="observeText">-</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="bottom-area" id="bottomArea" style="display:none;">
+    <button class="done-btn" id="doneBtn" onclick="finishTraining()">
+      <span>反馈效果</span>
+    </button>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item" onclick="switchTab('home')">
+      <div class="tab-icon">👨‍👩‍👦</div>
+      <span>家长干预</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('practice')">
+      <div class="tab-icon">🧒</div>
+      <span>孩子练习</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('me')">
+      <div class="tab-icon">👤</div>
+      <span>我的</span>
+    </div>
+  </div>
+</div>
+
+<!-- 引入路由守卫 -->
+<script src="config.js"></script>
+  <script src="js/api.js"></script>
+<script src="js/router.js"></script>
+<!-- 引入训练状态管理 - F-29: trainingStore -->
+<script src="js/store/trainingStore.js"></script>
+<script>
+  // 当前页面状态
+  let scenarioId = null;
+  let currentDay = 1;
+  let totalDays = 14;
+
+  // 更新时间显示
+  function updateTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  // F-24: 渲染步骤卡片组件 StepCard
+  function renderStepCard(step, index, currentStep) {
+    const isCompleted = index < currentStep;
+    const isCurrent = index === currentStep;
+    
+    let cardClass = 'step-card';
+    if (isCompleted) cardClass += ' completed';
+    if (isCurrent) cardClass += ' current';
+    
+    const checkmark = isCompleted ? '✓' : (index + 1);
+    
+    return `
+      <div class="${cardClass}" data-index="${index}">
+        <div class="step-num">${checkmark}</div>
+        <div class="step-body">
+          <div class="step-action">${step.action || step.title || '步骤' + (index + 1)}</div>
+          <div class="step-desc">${step.description || step.desc || ''}</div>
+          ${step.duration ? `<div class="step-duration">⏱ ${step.duration}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // 渲染训练内容
+  function renderTrainingContent(state) {
+    const { todayGoal, todayTip, steps, currentStep, day, totalDays, dayTheme, observePrompt } = state;
+
+    // 更新导航标题为今日任务名称
+    document.getElementById('navTitle').textContent = dayTheme || '今日任务';
+
+    // 更新当日进度条 - F-25
+    const progress = steps.length > 0 ? ((currentStep + 1) / steps.length) * 100 : 0;
+    document.getElementById('dayProgressBar').style.width = `${progress}%`;
+
+    // 更新目标卡片
+    document.getElementById('todayGoal').textContent = todayGoal || '今日目标';
+    document.getElementById('todayTip').textContent = todayTip || '在孩子心情好的时候练习';
+
+    // 更新观察重点
+    document.getElementById('observeText').textContent = observePrompt || '记录孩子完成情况';
+
+    // 更新步骤数量
+    document.getElementById('stepCount').textContent = steps.length;
+
+    // 渲染步骤列表 - F-24
+    const stepList = document.getElementById('stepList');
+    stepList.innerHTML = steps.map((step, index) => renderStepCard(step, index, currentStep)).join('');
+
+  }
+
+  // 渲染页面状态
+  function renderPage(state) {
+    const loadingEl = document.getElementById('loadingState');
+    const errorEl = document.getElementById('errorState');
+    const contentEl = document.getElementById('trainingContent');
+    const bottomEl = document.getElementById('bottomArea');
+    
+    // 隐藏所有状态
+    loadingEl.style.display = 'none';
+    errorEl.style.display = 'none';
+    contentEl.style.display = 'none';
+    bottomEl.style.display = 'none';
+    
+    if (state.loading) {
+      loadingEl.style.display = 'flex';
+      return;
+    }
+    
+    if (state.error) {
+      errorEl.style.display = 'flex';
+      document.getElementById('errorDesc').textContent = state.error;
+      return;
+    }
+    
+    // 渲染训练内容
+    contentEl.style.display = 'block';
+    bottomEl.style.display = 'block';
+    renderTrainingContent(state);
+  }
+
+  // 重试加载
+  function retryLoad() {
+    loadTrainingData();
+  }
+
+  // 加载训练数据 - F-27: 调用 GET /api/scenarios/{id}/days/{day}
+  async function loadTrainingData() {
+    // 从URL参数获取scenario_id和day（兼容 id 和 scenario_id 两种参数名）
+    const urlParams = new URLSearchParams(window.location.search);
+    scenarioId = urlParams.get('scenario_id') || urlParams.get('id') || sessionStorage.getItem('lastScenarioId');
+    currentDay = parseInt(urlParams.get('day')) || parseInt(sessionStorage.getItem('lastDay')) || 1;
+    
+    if (!scenarioId) {
+      // 如果没有scenario_id，跳转到首页
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    // 保存当前情境和天数到sessionStorage
+    sessionStorage.setItem('lastScenarioId', scenarioId);
+    sessionStorage.setItem('lastDay', currentDay);
+    
+    // 使用trainingStore获取数据
+    const state = await trainingStore.fetchTodayTraining(scenarioId, currentDay);
+    
+    if (state) {
+      totalDays = state.totalDays || 14;
+      renderPage(state);
+    } else {
+      // 显示错误状态
+      trainingStore.state.loading = false;
+      trainingStore.state.error = '加载训练数据失败';
+      renderPage(trainingStore.state);
+    }
+  }
+
+  // 返回
+  function goBack() {
+    // F-28: 退出保存进度到localStorage
+    trainingStore.saveProgress();
+    window.location.href = `history.html?id=${scenarioId}`;
+  }
+
+  // 完成训练，跳转到反馈页
+  function finishTraining() {
+    // F-28: 保存进度
+    trainingStore.saveProgress();
+    // 跳转到反馈页面
+    window.location.href = `feedback.html?scenario_id=${scenarioId}&day=${currentDay}`;
+  }
+
+  // Tab切换
+  function switchTab(tab) {
+    if (tab === 'home') {
+      window.location.href = 'index.html';
+    } else if (tab === 'practice') {
+      window.location.href = 'practice.html';
+    } else if (tab === 'me') {
+      window.location.href = 'me.html';
+    }
+  }
+
+  // 监听trainingStore变化
+  trainingStore.subscribe(renderPage);
+
+  // 页面卸载时保存进度 - F-28
+  window.addEventListener('beforeunload', function() {
+    trainingStore.saveProgress();
+  });
+
+  // 页面可见性变化时保存进度 - F-28
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      trainingStore.saveProgress();
+    }
+  });
+
+  // 初始化页面
+  function init() {
+    renderPage(trainingStore.state);
+    loadTrainingData();
+  }
+
+  // 启动
+  init();
+</script>
+</body>
+</html>

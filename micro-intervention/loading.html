@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>生成中 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
+  <style>
+    .page-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - var(--status-bar-height) - var(--tab-bar-height));
+      padding: 60px 24px;
+      text-align: center;
+    }
+
+    /* 加载动画 */
+    .loading-animation {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 32px;
+    }
+
+    .loading-circle {
+      position: absolute;
+      inset: 0;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+
+    .loading-circle-inner {
+      position: absolute;
+      inset: 12px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* 标题 */
+    .loading-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    /* 步骤文案 */
+    .loading-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    /* 四步指示器 */
+    .steps-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      transition: color 0.3s;
+    }
+
+    .step-item.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .step-item.done {
+      color: var(--accent);
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s;
+    }
+
+    .step-item.active .step-dot {
+      background: var(--accent);
+      transform: scale(1.2);
+    }
+
+    .step-item.done .step-dot {
+      background: var(--accent);
+    }
+
+    /* 超时/错误状态 */
+    .error-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .error-container.show {
+      display: flex;
+    }
+
+    .loading-container.hidden {
+      display: none;
+    }
+
+    .error-icon {
+      font-size: 48px;
+    }
+
+    .error-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .error-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .btn-retry {
+      margin-top: 8px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      padding: 12px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-retry:active {
+      background: var(--accent-dark);
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-wrapper">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span id="currentTime">9:41</span>
+      <div class="icons">📶 📡 🔋</div>
+    </div>
+
+    <!-- 页面主体 -->
+    <div class="page-content">
+      <!-- 加载中 -->
+      <div id="loadingContainer" class="loading-container">
+        <div class="loading-animation">
+          <div class="loading-circle"></div>
+          <div class="loading-circle-inner">🧠</div>
+        </div>
+        <div class="loading-title" id="loadingTitle">正在分析情境...</div>
+        <div class="loading-desc" id="loadingDesc">理解孩子当前遇到的挑战</div>
+        <div class="steps-indicator">
+          <div class="step-item active" id="step1">
+            <span class="step-dot"></span>
+            <span>理解情境</span>
+          </div>
+          <div class="step-item" id="step2">
+            <span class="step-dot"></span>
+            <span>分析问题</span>
+          </div>
+          <div class="step-item" id="step3">
+            <span class="step-dot"></span>
+            <span>匹配任务包</span>
+          </div>
+          <div class="step-item" id="step4">
+            <span class="step-dot"></span>
+            <span>生成方案</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 超时/错误状态 -->
+      <div id="errorContainer" class="error-container">
+        <div class="error-icon">⏰</div>
+        <div class="error-title">生成超时</div>
+        <div class="error-desc">网络不给力，请稍后重试</div>
+        <button class="btn-retry" onclick="retryGenerate()">重新生成</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
+
+  <script>
+    let scenarioId = null;
+    let currentStep = 1;
+    let timeoutId = null;
+
+    // 四步配置
+    const STEPS = [
+      { title: '正在分析情境...', desc: '理解孩子当前遇到的挑战' },
+      { title: '正在分析问题...', desc: '识别核心行为特征' },
+      { title: '正在匹配任务包...', desc: '从知识库中寻找适合的方法' },
+      { title: '正在生成方案...', desc: '整理训练步骤和技巧提示' }
+    ];
+
+    // 超时时间 30秒
+    const TIMEOUT_MS = 30000;
+
+    // 更新时间
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent =
+        `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 更新步骤指示器
+    function updateStep(step) {
+      currentStep = step;
+      const stepData = STEPS[step - 1];
+      document.getElementById('loadingTitle').textContent = stepData.title;
+      document.getElementById('loadingDesc').textContent = stepData.desc;
+
+      for (let i = 1; i <= 4; i++) {
+        const item = document.getElementById('step' + i);
+        item.classList.remove('active', 'done');
+        if (i < step) {
+          item.classList.add('done');
+        } else if (i === step) {
+          item.classList.add('active');
+        }
+      }
+    }
+
+    // 启动步骤动画
+    function startStepAnimation() {
+      let step = 1;
+      updateStep(step);
+      const interval = setInterval(() => {
+        if (step < 4) {
+          step++;
+          updateStep(step);
+        } else {
+          clearInterval(interval);
+        }
+      }, 2000);
+      return interval;
+    }
+
+    // 显示超时/错误
+    function showError() {
+      document.getElementById('loadingContainer').classList.add('hidden');
+      document.getElementById('errorContainer').classList.add('show');
+    }
+
+    // 重新生成
+    function retryGenerate() {
+      document.getElementById('loadingContainer').classList.remove('hidden');
+      document.getElementById('errorContainer').classList.remove('show');
+      generatePackage();
+    }
+
+    // 生成训练方案
+    async function generatePackage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      scenarioId = urlParams.get('scenario_id');
+
+      if (!scenarioId) {
+        showError();
+        return;
+      }
+
+      // 开始步骤动画
+      startStepAnimation();
+
+      // 设置超时
+      timeoutId = setTimeout(() => {
+        showError();
+      }, TIMEOUT_MS);
+
+      try {
+        const response = await fetch(getApiBase() + '/api/task-packages/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scenario_id: scenarioId })
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error('生成失败');
+        }
+
+        const result = await response.json();
+        console.log('生成成功:', result);
+
+        // 保存生成结果到 sessionStorage，供 package.html 使用
+        if (result.data) {
+          sessionStorage.setItem('lastGeneratedPackage', JSON.stringify(result.data));
+          sessionStorage.setItem('lastScenarioId', scenarioId);
+        }
+
+        // 跳转到 package.html
+        setTimeout(() => {
+          window.location.href = 'package.html?scenario_id=' + scenarioId;
+        }, 500);
+
+      } catch (error) {
+        console.error('生成失败:', error);
+        clearTimeout(timeoutId);
+        showError();
+      }
+    }
+
+    // 初始化
+    generatePackage();
+  </script>
+</body>
+</html>
