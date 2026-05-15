@@ -1,28 +1,24 @@
 /**
  * 路由守卫 - 检查用户是否已同意隐私协议
+ * 注：根据设计规范V2.0，不需要隐私协议弹窗，用户直接使用即代表同意
+ * 此文件保留但功能已禁用
  */
 (function() {
-  const PUBLIC_PAGES = ['privacy-consent.html'];
-  
+  // 公开页面列表
+  const PUBLIC_PAGES = [];  // 无需验证的页面
+
   function checkRouteGuard() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    
-    // 如果是公开页面，放行
-    if (PUBLIC_PAGES.includes(currentPage)) {
-      return;
-    }
-    
-    // 检查是否已同意隐私协议
-    const consentGiven = localStorage.getItem('consent_given');
-    if (consentGiven !== 'true') {
-      // 未同意，跳转到隐私协议页
-      window.location.href = 'privacy-consent.html';
-    }
+
+    // 已禁用路由守卫 - 按设计规范，用户直接使用即代表同意
+    // if (PUBLIC_PAGES.includes(currentPage)) { return; }
+    // if (consentGiven !== 'true') { window.location.href = 'privacy-consent.html'; }
+    return;
   }
-  
-  // 页面加载时检查
+
+  // 检查（已禁用）
   checkRouteGuard();
-  
-  // 监听路由变化（支持浏览器前进后退）
-  window.addEventListener('popstate', checkRouteGuard);
+
+  // 监听路由变化（已禁用）
+  // window.addEventListener('popstate', checkRouteGuard);
 })();

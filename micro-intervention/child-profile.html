@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>孩子档案 - 微干预</title>
+  <link rel="stylesheet" href="/static/styles/design-system.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: var(--font-family);
       background: #F7F4F0;
       min-height: 100vh;
       display: flex;
@@ -28,7 +29,7 @@
     /* 状态栏 */
     .status-bar {
       height: 44px;
-      background: #2D2D2D;
+      background: #1A1A1A;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -225,6 +226,8 @@
       <button class="save-btn" onclick="saveProfile()">保存</button>
     </div>
   </div>
+  <script src="config.js"></script>
+  <script src="js/api.js"></script>
   <script>
     const nameInput = document.getElementById('inputName');
     const ageSelect = document.getElementById('inputAge');
@@ -240,13 +243,43 @@
     }
 
     function saveProfile() {
-      console.log('保存档案:', {
-        name: nameInput.value,
-        age: ageSelect.value,
-        gender: document.getElementById('inputGender').value
-      });
-      window.location.href = 'me.html';
+      const name = nameInput.value.trim() || '小星';
+      const age = ageInput.value || '11';
+      const gender = document.getElementById('inputGender').value;
+
+      // 保存到 localStorage
+      localStorage.setItem('child_name', name);
+      localStorage.setItem('child_age', age);
+      localStorage.setItem('child_gender', gender);
+
+      // 提示并返回
+      showToast('保存成功');
+      setTimeout(() => {
+        window.location.href = 'me.html';
+      }, 500);
     }
+
+    // Toast 提示
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(45,45,45,0.9);color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;z-index:9999;';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1500);
+    }
+
+    // 页面加载时读取已保存的信息
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedName = localStorage.getItem('child_name') || '小星';
+      const savedAge = localStorage.getItem('child_age') || '11';
+      const savedGender = localStorage.getItem('child_gender') || 'boy';
+
+      nameInput.value = savedName;
+      ageSelect.value = savedAge;
+      document.getElementById('inputGender').value = savedGender;
+
+      updateDisplay();
+    });
   </script>
 </body>
 </html>
