@@ -1,0 +1,545 @@
+{
+  "version": "1.0",
+  "description": "微干预 Mock 数据集 - 用于测试和开发环境",
+  "updated": "2026-05-19",
+  "layers": {
+    "L1": {
+      "description": "基础场景（每个标签1套，共6套）",
+      "count": 6
+    },
+    "L2": {
+      "description": "扩展场景（每个标签额外2套，共12套）",
+      "count": 12,
+      "status": "planned"
+    }
+  },
+  "packages": {
+    "20260505001_fuyi_kangju": {
+      "scenario_id": "mock_scenario_001",
+      "package_code": "20260505001_fuyi_kangju",
+      "scenario_emoji": "👕",
+      "scenario_title": "👕 穿衣抗拒",
+      "core_goal": {
+        "title": "配合伸手进袖子，无抗拒完成穿衣",
+        "content": "通过渐进式感觉统合训练，逐步降低孩子对衣物触碰皮肤的敏感反应..."
+      },
+      "days_data": {
+        "days": [
+          {
+            "day": 1,
+            "theme": "认识衣物",
+            "goal": "今天目标：认识不同衣物品种",
+            "tip": "用孩子喜欢的衣物开始！",
+            "steps": [
+              {"step_order": 1, "description": "拿出衣物放在孩子面前", "prompt_level": "无提示", "success_criteria": "注视衣物3秒"},
+              {"step_order": 2, "description": "描述衣物的颜色", "prompt_level": "视觉提示", "success_criteria": "正确指认颜色"},
+              {"step_order": 3, "description": "邀请孩子触摸衣物", "prompt_level": "示范引导", "success_criteria": "主动触摸"}
+            ]
+          },
+          {
+            "day": 2,
+            "theme": "近距离接触",
+            "goal": "今天目标：接受衣物靠近身体",
+            "tip": "不要着急，慢慢来！",
+            "steps": [
+              {"step_order": 1, "description": "家长拿起衣物在孩子视线范围内", "prompt_level": "无提示", "success_criteria": "注视衣物"},
+              {"step_order": 2, "description": "逐渐将衣物移向孩子手臂", "prompt_level": "身体辅助", "success_criteria": "不躲避"}
+            ]
+          },
+          {
+            "day": 3,
+            "theme": "尝试伸手",
+            "goal": "今天目标：愿意伸手进袖子",
+            "tip": "及时表扬小进步！",
+            "steps": [
+              {"step_order": 1, "description": "把袖子撑开", "prompt_level": "手势提示", "success_criteria": "愿意看"},
+              {"step_order": 2, "description": "引导孩子手伸入袖子", "prompt_level": "身体辅助", "success_criteria": "手进入袖子"}
+            ]
+          },
+          {
+            "day": 4,
+            "theme": "逐步适应",
+            "goal": "今天目标：接受衣物接触手臂",
+            "tip": "多给予口头表扬！",
+            "steps": [
+              {"step_order": 1, "description": "用衣物轻触手背", "prompt_level": "无提示", "success_criteria": "不抗拒"},
+              {"step_order": 2, "description": "逐步增加接触时间", "prompt_level": "视觉提示", "success_criteria": "接受3秒"}
+            ]
+          },
+          {
+            "day": 5,
+            "theme": "建立信任",
+            "goal": "今天目标：接受家长辅助穿衣",
+            "tip": "配合零食强化效果更好！",
+            "steps": [
+              {"step_order": 1, "description": "家长辅助手进入袖子", "prompt_level": "身体辅助", "success_criteria": "配合完成"},
+              {"step_order": 2, "description": "给予零食强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 6,
+            "theme": "独立完成",
+            "goal": "今天目标：完成半独立穿衣",
+            "tip": "逐步减少辅助！",
+            "steps": [
+              {"step_order": 1, "description": "在较少辅助下穿衣", "prompt_level": "手势提示", "success_criteria": "部分完成"},
+              {"step_order": 2, "description": "给予大力度表扬", "prompt_level": "无提示", "success_criteria": "积极配合"}
+            ]
+          },
+          {
+            "day": 7,
+            "theme": "泛化练习",
+            "goal": "今天目标：在不同衣物上泛化",
+            "tip": "变换不同衣物练习！",
+            "steps": [
+              {"step_order": 1, "description": "更换不同材质衣物", "prompt_level": "示范引导", "success_criteria": "接受新衣物"},
+              {"step_order": 2, "description": "完成整体穿衣流程", "prompt_level": "视觉提示", "success_criteria": "独立完成"}
+            ]
+          }
+        ]
+      },
+      "confidence": 0.87,
+      "created_at": "2026-05-05T10:00:00Z"
+    },
+    "20260505002_shejiao_duobi": {
+      "scenario_id": "mock_scenario_002",
+      "package_code": "20260505002_shejiao_duobi",
+      "scenario_emoji": "👀",
+      "scenario_title": "👀 回避目光接触",
+      "core_goal": {
+        "title": "在呼名时看向家长，建立目光接触",
+        "content": "通过呼名反应训练，逐步建立孩子对名字的反应和目光接触..."
+      },
+      "days_data": {
+        "days": [
+          {
+            "day": 1,
+            "theme": "呼名反应",
+            "goal": "今天目标：对名字有反应",
+            "tip": "选择孩子放松时练习！",
+            "steps": [
+              {"step_order": 1, "description": "在安静环境下叫孩子名字", "prompt_level": "无提示", "success_criteria": "抬头或转身"},
+              {"step_order": 2, "description": "立即给予强化物", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 2,
+            "theme": "建立关联",
+            "goal": "今天目标：呼名后主动看向家长",
+            "tip": "强化物要及时！",
+            "steps": [
+              {"step_order": 1, "description": "叫名字后等待1秒", "prompt_level": "无提示", "success_criteria": "主动看向"},
+              {"step_order": 2, "description": "立即给予强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 3,
+            "theme": "目光接触",
+            "goal": "今天目标：建立短暂目光接触",
+            "tip": "目光接触时间慢慢延长！",
+            "steps": [
+              {"step_order": 1, "description": "叫名字后引导目光接触", "prompt_level": "手势提示", "success_criteria": "目光接触1秒"},
+              {"step_order": 2, "description": "逐步延长目光时间", "prompt_level": "视觉提示", "success_criteria": "目光接触2秒"}
+            ]
+          },
+          {
+            "day": 4,
+            "theme": "延长接触",
+            "goal": "今天目标：目光接触达3秒",
+            "tip": "继续强化！",
+            "steps": [
+              {"step_order": 1, "description": "叫名字后要求目光接触3秒", "prompt_level": "视觉提示", "success_criteria": "达成3秒"},
+              {"step_order": 2, "description": "给予强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 5,
+            "theme": "泛化环境",
+            "goal": "今天目标：在不同环境保持目光接触",
+            "tip": "逐步增加干扰！",
+            "steps": [
+              {"step_order": 1, "description": "在不同房间叫名字", "prompt_level": "无提示", "success_criteria": "目光接触"},
+              {"step_order": 2, "description": "有轻微干扰时呼名", "prompt_level": "手势提示", "success_criteria": "看向家长"}
+            ]
+          },
+          {
+            "day": 6,
+            "theme": "增加干扰",
+            "goal": "今天目标：在有干扰时保持目光接触",
+            "tip": "先消除干扰再练习！",
+            "steps": [
+              {"step_order": 1, "description": "在有玩具吸引时呼名", "prompt_level": "视觉提示", "success_criteria": "看向家长"},
+              {"step_order": 2, "description": "目光接触后给予强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 7,
+            "theme": "综合练习",
+            "goal": "今天目标：在自然情境中呼名应名",
+            "tip": "日常生活中多练习！",
+            "steps": [
+              {"step_order": 1, "description": "在日常活动中随机呼名", "prompt_level": "无提示", "success_criteria": "主动应名"},
+              {"step_order": 2, "description": "自然给予表扬和强化", "prompt_level": "无提示", "success_criteria": "形成习惯"}
+            ]
+          }
+        ]
+      },
+      "confidence": 0.85,
+      "created_at": "2026-05-05T10:00:00Z"
+    },
+    "20260505003_jiaomingzi_baying": {
+      "scenario_id": "mock_scenario_003",
+      "package_code": "20260505003_jiaomingzi_baying",
+      "scenario_emoji": "👂",
+      "scenario_title": "👂 对名字无反应",
+      "core_goal": {
+        "title": "听到名字立即回应",
+        "content": "通过反复练习，建立孩子对呼名的条件反射..."
+      },
+      "days_data": {
+        "days": [
+          {
+            "day": 1,
+            "theme": "建立注意",
+            "goal": "今天目标：能注意到声音",
+            "tip": "近距离开始练习！",
+            "steps": [
+              {"step_order": 1, "description": "在孩子背后叫名字", "prompt_level": "无提示", "success_criteria": "回头"},
+              {"step_order": 2, "description": "叫名字后立即给零食", "prompt_level": "无提示", "success_criteria": "形成关联"}
+            ]
+          },
+          {
+            "day": 2,
+            "theme": "强化关联",
+            "goal": "今天目标：呼名后主动转头",
+            "tip": "零食要即时！",
+            "steps": [
+              {"step_order": 1, "description": "连续叫名字3次", "prompt_level": "无提示", "success_criteria": "每次回头"},
+              {"step_order": 2, "description": "每次都给强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 3,
+            "theme": "延长等待",
+            "goal": "今天目标：呼名后等待更长时间",
+            "tip": "逐步延长等待时间！",
+            "steps": [
+              {"step_order": 1, "description": "叫名字后等待2秒", "prompt_level": "无提示", "success_criteria": "2秒内回头"},
+              {"step_order": 2, "description": "延长到3秒", "prompt_level": "视觉提示", "success_criteria": "主动回应"}
+            ]
+          },
+          {
+            "day": 4,
+            "theme": "提升反应",
+            "goal": "今天目标：呼名后有明确反应",
+            "tip": "反应要明确！",
+            "steps": [
+              {"step_order": 1, "description": "叫名字后要求看向家长", "prompt_level": "手势提示", "success_criteria": "明确看向"},
+              {"step_order": 2, "description": "给予强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 5,
+            "theme": "减少辅助",
+            "goal": "今天目标：减少手势辅助",
+            "tip": "慢慢撤出辅助！",
+            "steps": [
+              {"step_order": 1, "description": "只用眼神提示", "prompt_level": "视觉提示", "success_criteria": "回应"},
+              {"step_order": 2, "description": "完全撤出辅助", "prompt_level": "无提示", "success_criteria": "自主回应"}
+            ]
+          },
+          {
+            "day": 6,
+            "theme": "增加距离",
+            "goal": "今天目标：远距离也能应名",
+            "tip": "逐步拉远距离！",
+            "steps": [
+              {"step_order": 1, "description": "从3米外叫名字", "prompt_level": "无提示", "success_criteria": "回应"},
+              {"step_order": 2, "description": "逐步拉远到5米", "prompt_level": "视觉提示", "success_criteria": "主动回应"}
+            ]
+          },
+          {
+            "day": 7,
+            "theme": "泛化练习",
+            "goal": "今天目标：在不同情境中应名",
+            "tip": "日常生活中多练习！",
+            "steps": [
+              {"step_order": 1, "description": "在超市叫名字", "prompt_level": "无提示", "success_criteria": "回应"},
+              {"step_order": 2, "description": "在公园叫名字", "prompt_level": "视觉提示", "success_criteria": "主动应名"}
+            ]
+          }
+        ]
+      },
+      "confidence": 0.83,
+      "created_at": "2026-05-05T10:00:00Z"
+    },
+    "20260505004_qingxu_bengkuai": {
+      "scenario_id": "mock_scenario_004",
+      "package_code": "20260505004_qingxu_bengkuai",
+      "scenario_emoji": "😢",
+      "scenario_title": "😢 情绪爆发哭闹",
+      "core_goal": {
+        "title": "在情绪崩溃前识别信号并干预",
+        "content": "通过识别情绪触发信号，在崩溃前进行积极干预..."
+      },
+      "days_data": {
+        "days": [
+          {
+            "day": 1,
+            "theme": "识别信号",
+            "goal": "今天目标：识别情绪触发信号",
+            "tip": "注意观察孩子的细微变化！",
+            "steps": [
+              {"step_order": 1, "description": "观察并记录触发事件", "prompt_level": "无提示", "success_criteria": "完成记录"},
+              {"step_order": 2, "description": "识别早期信号", "prompt_level": "视觉提示", "success_criteria": "说出信号"}
+            ]
+          },
+          {
+            "day": 2,
+            "theme": "记录模式",
+            "goal": "今天目标：记录情绪变化模式",
+            "tip": "建立记录习惯！",
+            "steps": [
+              {"step_order": 1, "description": "记录每次情绪波动", "prompt_level": "无提示", "success_criteria": "准确记录"},
+              {"step_order": 2, "description": "识别共同触发因素", "prompt_level": "视觉提示", "success_criteria": "找出规律"}
+            ]
+          },
+          {
+            "day": 3,
+            "theme": "早期干预",
+            "goal": "今天目标：在早期信号出现时干预",
+            "tip": "越早干预越好！",
+            "steps": [
+              {"step_order": 1, "description": "识别到早期信号时转移注意", "prompt_level": "无提示", "success_criteria": "成功转移"},
+              {"step_order": 2, "description": "给予替代活动", "prompt_level": "视觉提示", "success_criteria": "参与活动"}
+            ]
+          },
+          {
+            "day": 4,
+            "theme": "预防策略",
+            "goal": "今天目标：使用预防策略",
+            "tip": "预防胜于治疗！",
+            "steps": [
+              {"step_order": 1, "description": "预测可能触发情境", "prompt_level": "无提示", "success_criteria": "提前准备"},
+              {"step_order": 2, "description": "提前提供选择", "prompt_level": "视觉提示", "success_criteria": "接受选择"}
+            ]
+          },
+          {
+            "day": 5,
+            "theme": "情绪表达",
+            "goal": "今天目标：教授情绪表达方式",
+            "tip": "用简单语言表达！",
+            "steps": [
+              {"step_order": 1, "description": "教授用图片表达情绪", "prompt_level": "示范引导", "success_criteria": "正确指认"},
+              {"step_order": 2, "description": "引导用图片表达需求", "prompt_level": "手势提示", "success_criteria": "主动使用"}
+            ]
+          },
+          {
+            "day": 6,
+            "theme": "自我调节",
+            "goal": "今天目标：学习自我调节策略",
+            "tip": "深呼吸是个好方法！",
+            "steps": [
+              {"step_order": 1, "description": "教授深呼吸技巧", "prompt_level": "示范引导", "success_criteria": "模仿动作"},
+              {"step_order": 2, "description": "在平静时练习", "prompt_level": "视觉提示", "success_criteria": "独立完成"}
+            ]
+          },
+          {
+            "day": 7,
+            "theme": "综合应用",
+            "goal": "今天目标：在真实情境中应用策略",
+            "tip": "循序渐进！",
+            "steps": [
+              {"step_order": 1, "description": "模拟可能触发情境", "prompt_level": "无提示", "success_criteria": "使用策略"},
+              {"step_order": 2, "description": "给予积极强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          }
+        ]
+      },
+      "confidence": 0.80,
+      "created_at": "2026-05-05T10:00:00Z"
+    },
+    "20260505005_yanshen_buyishi": {
+      "scenario_id": "mock_scenario_005",
+      "package_code": "20260505005_yanshen_buyishi",
+      "scenario_emoji": "🙈",
+      "scenario_title": "🙈 避免眼神接触",
+      "core_goal": {
+        "title": "逐步建立短暂目光接触",
+        "content": "从周边视觉开始，逐步过渡到直接目光接触..."
+      },
+      "days_data": {
+        "days": [
+          {
+            "day": 1,
+            "theme": "周边视觉",
+            "goal": "今天目标：接受家长在视线范围内",
+            "tip": "从孩子喜欢的东西开始！",
+            "steps": [
+              {"step_order": 1, "description": "家长坐在孩子旁边", "prompt_level": "无提示", "success_criteria": "不躲避"},
+              {"step_order": 2, "description": "逐渐移近并说话", "prompt_level": "无提示", "success_criteria": "保持平静"}
+            ]
+          },
+          {
+            "day": 2,
+            "theme": "降低敏感",
+            "goal": "今天目标：接受家长靠近",
+            "tip": "慢慢来！",
+            "steps": [
+              {"step_order": 1, "description": "家长逐渐靠近", "prompt_level": "无提示", "success_criteria": "接受靠近"},
+              {"step_order": 2, "description": "给予零食强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 3,
+            "theme": "短暂接触",
+            "goal": "今天目标：接受短暂目光接触",
+            "tip": "从1秒开始！",
+            "steps": [
+              {"step_order": 1, "description": "要求目光接触1秒", "prompt_level": "视觉提示", "success_criteria": "达成1秒"},
+              {"step_order": 2, "description": "立即给予强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 4,
+            "theme": "延长接触",
+            "goal": "今天目标：目光接触延长至2秒",
+            "tip": "逐步延长！",
+            "steps": [
+              {"step_order": 1, "description": "要求目光接触2秒", "prompt_level": "视觉提示", "success_criteria": "达成2秒"},
+              {"step_order": 2, "description": "给予强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 5,
+            "theme": "建立习惯",
+            "goal": "今天目标：目光接触成为习惯",
+            "tip": "多创造机会！",
+            "steps": [
+              {"step_order": 1, "description": "每次互动时要求目光接触", "prompt_level": "手势提示", "success_criteria": "主动配合"},
+              {"step_order": 2, "description": "给予社会性强化", "prompt_level": "无提示", "success_criteria": "接受强化"}
+            ]
+          },
+          {
+            "day": 6,
+            "theme": "泛化练习",
+            "goal": "今天目标：在不同情境中保持目光接触",
+            "tip": "多场景练习！",
+            "steps": [
+              {"step_order": 1, "description": "在不同房间练习", "prompt_level": "无提示", "success_criteria": "保持接触"},
+              {"step_order": 2, "description": "有他人在场时练习", "prompt_level": "视觉提示", "success_criteria": "自然接触"}
+            ]
+          },
+          {
+            "day": 7,
+            "theme": "综合提升",
+            "goal": "今天目标：在自然情境中主动目光接触",
+            "tip": "日常生活中多练习！",
+            "steps": [
+              {"step_order": 1, "description": "日常对话中要求目光接触", "prompt_level": "无提示", "success_criteria": "主动配合"},
+              {"step_order": 2, "description": "给予表扬强化", "prompt_level": "无提示", "success_criteria": "形成习惯"}
+            ]
+          }
+        ]
+      },
+      "confidence": 0.82,
+      "created_at": "2026-05-05T10:00:00Z"
+    },
+    "20260505006_kebian_xingwei": {
+      "scenario_id": "mock_scenario_006",
+      "package_code": "20260505006_kebian_xingwei",
+      "scenario_emoji": "🔄",
+      "scenario_title": "🔄 重复刻板动作",
+      "core_goal": {
+        "title": "用功能性行为替代刻板动作",
+        "content": "通过提供有意义的活动，减少刻板行为的发生..."
+      },
+      "days_data": {
+        "days": [
+          {
+            "day": 1,
+            "theme": "替代行为",
+            "goal": "今天目标：用玩具替代刻板动作",
+            "tip": "选择孩子感兴趣的活动！",
+            "steps": [
+              {"step_order": 1, "description": "观察并记录刻板行为", "prompt_level": "无提示", "success_criteria": "准确记录"},
+              {"step_order": 2, "description": "在行为前提供玩具", "prompt_level": "手势提示", "success_criteria": "接受玩具"}
+            ]
+          },
+          {
+            "day": 2,
+            "theme": "识别触发",
+            "goal": "今天目标：识别刻板行为的触发因素",
+            "tip": "注意时间和情境！",
+            "steps": [
+              {"step_order": 1, "description": "记录发生时间和情境", "prompt_level": "无提示", "success_criteria": "完成记录"},
+              {"step_order": 2, "description": "分析共同模式", "prompt_level": "视觉提示", "success_criteria": "找出规律"}
+            ]
+          },
+          {
+            "day": 3,
+            "theme": "功能性活动",
+            "goal": "今天目标：提供替代的功能性活动",
+            "tip": "选择类似感觉输入的活动！",
+            "steps": [
+              {"step_order": 1, "description": "提供感觉统合玩具", "prompt_level": "无提示", "success_criteria": "接受玩具"},
+              {"step_order": 2, "description": "引导正确使用", "prompt_level": "示范引导", "success_criteria": "正确使用"}
+            ]
+          },
+          {
+            "day": 4,
+            "theme": "建立替代",
+            "goal": "今天目标：用替代行为替换刻板动作",
+            "tip": "替代行为要有意义！",
+            "steps": [
+              {"step_order": 1, "description": "在刻板行为出现时介入", "prompt_level": "无提示", "success_criteria": "接受介入"},
+              {"step_order": 2, "description": "引导替代活动", "prompt_level": "手势提示", "success_criteria": "参与活动"}
+            ]
+          },
+          {
+            "day": 5,
+            "theme": "强化替代",
+            "goal": "今天目标：强化替代行为",
+            "tip": "替代行为要立即强化！",
+            "steps": [
+              {"step_order": 1, "description": "替代行为出现时立即强化", "prompt_level": "无提示", "success_criteria": "正确强化"},
+              {"step_order": 2, "description": "逐步延长替代时间", "prompt_level": "视觉提示", "success_criteria": "持续参与"}
+            ]
+          },
+          {
+            "day": 6,
+            "theme": "减少触发",
+            "goal": "今天目标：减少触发因素",
+            "tip": "环境控制很重要！",
+            "steps": [
+              {"step_order": 1, "description": "调整环境减少触发", "prompt_level": "无提示", "success_criteria": "有效调整"},
+              {"step_order": 2, "description": "提前提供替代活动", "prompt_level": "视觉提示", "success_criteria": "预防发生"}
+            ]
+          },
+          {
+            "day": 7,
+            "theme": "泛化维持",
+            "goal": "今天目标：在不同情境中维持替代行为",
+            "tip": "多场景练习！",
+            "steps": [
+              {"step_order": 1, "description": "在不同环境中练习", "prompt_level": "无提示", "success_criteria": "维持行为"},
+              {"step_order": 2, "description": "自然强化", "prompt_level": "无提示", "success_criteria": "形成习惯"}
+            ]
+          }
+        ]
+      },
+      "confidence": 0.81,
+      "created_at": "2026-05-05T10:00:00Z"
+    }
+  },
+  "fallback": "20260505001_fuyi_kangju",
+  "triggers": {
+    "description": "Mock触发规则",
+    "rules": [
+      "MOCK_MODE=true 环境变量启用",
+      "X-Mock-Mode: true 请求头启用",
+      "优先按 selected_tags 匹配返回",
+      "无匹配时返回 fallback 配置"
+    ]
+  }
+}
