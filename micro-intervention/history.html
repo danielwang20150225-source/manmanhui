@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -6,9 +6,28 @@
   <title>训练记录 - 微干预</title>
   <link rel="stylesheet" href="/static/styles/design-system.css">
   <style>
+    /* Professional Design System Override */
+    :root {
+      --accent: #34C759;
+      --accent-dark: #2DBE48;
+      --accent-light: #E8F8ED;
+      --bg: #F8F9FA;
+      --card: #FFFFFF;
+      --text-primary: #1D1D1F;
+      --text-secondary: #6E6E73;
+      --text-hint: #AEAEB2;
+      --border: #E5E5E7;
+      --blue: #007AFF;
+      --blue-light: #E5F2FF;
+      --orange: #FF9500;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--font-family);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
       background: #F7F4F0;
       min-height: 100vh;
       display: flex;
@@ -26,7 +45,8 @@
       overflow: hidden;
       border: 1px solid #E8E4E0;
     }
-    /* 状态栏 */
+
+    /* Status Bar */
     .status-bar {
       height: 44px;
       background: #1A1A1A;
@@ -39,196 +59,143 @@
       font-weight: 600;
     }
     .status-bar .icons { display: flex; gap: 6px; }
-    /* 顶部导航 */
+
+    /* Header */
     .header {
       display: flex;
       align-items: center;
       padding: 12px 16px;
-      background: #FFFFFF;
-      border-bottom: 1px solid #E8E4E0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
     }
     .back-btn {
-      width: 32px; height: 32px;
+      width: 36px; height: 36px;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; border-radius: 50%; transition: background 0.2s;
-      font-size: 18px; color: #2D2D2D;
+      cursor: pointer; border-radius: 50%; transition: all 0.2s;
+      font-size: 18px; color: var(--text-primary);
+      background: var(--bg);
     }
-    .back-btn:active { background: #F0F0F0; }
+    .back-btn:active { background: var(--border); }
     .header-title {
       flex: 1; text-align: center;
-      font-size: 17px; font-weight: 600; color: #2D2D2D;
-      margin-right: 32px;
+      font-size: 17px; font-weight: 600; color: var(--text-primary);
+      margin-right: 36px;
     }
-    /* 页面主体 */
-    .page-content {
-      padding: 0 0 24px;
-    }
-    /* 加载状态 */
-    .loading-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #6B6B6B;
-    }
-    .loading-spinner {
-      font-size: 32px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    /* 情境标题栏 */
+
+    /* Page Content */
+    .page-content { padding: 0 0 24px; }
+
+    /* Loading State */
+    .loading-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .loading-spinner { font-size: 32px; animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Scenario Bar */
     .scenario-bar {
-      background: #FFFFFF;
+      background: var(--card);
       padding: 16px 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 12px;
+      box-shadow: var(--shadow);
     }
-    .scenario-bar .emoji { font-size: 24px; }
-    .scenario-bar .name {
-      font-size: 17px;
-      font-weight: bold;
-      color: #2D2D2D;
+    .scenario-bar .emoji {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
     }
-    .scenario-bar .meta {
-      font-size: 13px;
-      color: #6B6B6B;
-      margin-left: auto;
-    }
-    /* 统计数据 */
+    .scenario-bar .name { font-size: 17px; font-weight: 600; color: var(--text-primary); flex: 1; }
+    .scenario-bar .meta { font-size: 13px; color: var(--text-secondary); }
+
+    /* Stats Row */
     .stats-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 1px;
-      background: #E8E4E0;
+      gap: 8px;
       margin: 0 16px 16px;
-      border-radius: 12px;
-      overflow: hidden;
     }
     .stat-item {
-      background: #FFFFFF;
+      background: var(--card);
+      border-radius: var(--radius);
       padding: 14px 8px;
       text-align: center;
+      box-shadow: var(--shadow);
     }
-    .stat-item .num {
-      font-size: 22px;
-      font-weight: bold;
-      color: #2D2D2D;
-      margin-bottom: 2px;
-    }
-    .stat-item .num.green { color: #7CB342; }
-    .stat-item .num.orange { color: #F5A623; }
-    .stat-item .num.red { color: #E57373; }
-    .stat-item .label { font-size: 11px; color: #6B6B6B; }
-    /* 月份分组 */
-    .month-group { }
+    .stat-item .num { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .stat-item .num.green { color: var(--accent); }
+    .stat-item .num.orange { color: var(--orange); }
+    .stat-item .num.red { color: #FF3B30; }
+    .stat-item .label { font-size: 11px; color: var(--text-secondary); }
+
+    /* Month Group */
     .month-label {
-      padding: 12px 20px 8px;
+      padding: 14px 20px 8px;
       font-size: 13px;
       font-weight: 600;
-      color: #6B6B6B;
+      color: var(--text-secondary);
     }
     .record-list { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
     .record-card {
-      background: #FFFFFF;
-      border-radius: 12px;
+      background: var(--card);
+      border-radius: var(--radius);
       padding: 14px 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      box-shadow: var(--shadow);
     }
-    .record-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .record-day {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .record-day .day-num {
-      font-size: 15px;
-      font-weight: 600;
-      color: #2D2D2D;
-    }
-    .record-day .date {
-      font-size: 12px;
-      color: #6B6B6B;
-    }
-    .record-effect {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .record-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .record-day { display: flex; align-items: center; gap: 8px; }
+    .record-day .day-num { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .record-day .date { font-size: 12px; color: var(--text-secondary); }
+    .record-effect { display: flex; align-items: center; gap: 4px; }
     .effect-badge {
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 12px;
       font-size: 12px;
       font-weight: 500;
     }
-    .effect-badge.good { background: #E8F5E9; color: #7CB342; }
-    .effect-badge.neutral { background: #FFF8E1; color: #F5A623; }
-    .effect-badge.bad { background: #FFEBEE; color: #E57373; }
-    .record-body {
-      font-size: 13px;
-      color: #6B6B6B;
-      line-height: 1.5;
-      padding-left: 2px;
-    }
-    .record-footer {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #F5F5F5;
-    }
-    .record-tag {
-      font-size: 12px;
-      color: #6B6B6B;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .record-tag .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #E8E4E0;
-    }
-    .record-tag.count .dot { background: #7CB342; }
-    .record-tag.note .dot { background: #F5A623; }
-    /* 空状态 */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
-    .empty-state .text { font-size: 15px; color: #6B6B6B; }
+    .effect-badge.good { background: var(--accent-light); color: var(--accent); }
+    .effect-badge.neutral { background: #FFF8E1; color: var(--orange); }
+    .effect-badge.bad { background: #FFEBEE; color: #FF3B30; }
+    .record-body { font-size: 13px; color: var(--text-secondary); line-height: 1.5; padding-left: 2px; }
+    .record-footer { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+    .record-tag { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+    .record-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+    .record-tag.count .dot { background: var(--accent); }
+    .record-tag.note .dot { background: var(--orange); }
+
+    /* Empty State */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
+    .empty-state .text { font-size: 15px; color: var(--text-secondary); }
   </style>
 </head>
 <body>
   <div class="phone-wrapper">
-    <!-- 状态栏 -->
+    <!-- Status Bar -->
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="icons"><span>📶</span><span>🔋</span></div>
     </div>
 
-    <!-- 顶部导航 -->
+    <!-- Header -->
     <div class="header">
       <div class="back-btn" onclick="window.location.href='index.html'">←</div>
       <div class="header-title">训练记录</div>
     </div>
 
-    <!-- 页面主体 -->
+    <!-- Page Content -->
     <div class="page-content" id="pageContent"></div>
 
-    <!-- 加载状态（放在pageContent外面，防止innerHTML覆盖） -->
+    <!-- Loading State -->
     <div class="loading-state" id="loadingState">
       <div class="loading-spinner">🔄</div>
       <div style="margin-top:12px;">加载中...</div>
@@ -237,126 +204,80 @@
 
   <script src="config.js"></script>
   <script src="js/api.js"></script>
+
   <script>
-    // 获取URL参数
     function getScenarioId() {
       const params = new URLSearchParams(window.location.search);
       return params.get('id');
     }
 
-    // 从标题提取emoji
     function getEmojiFromTitle(title) {
-      const emojiMap = {
-        '穿衣': '👕', '社交': '👀', '情绪': '😢', '叫名字': '👂',
-        '眼神': '🙈', '刻板': '🔄', '抗拒': '👕', '哭闹': '😢',
-        '躲避': '🙈', '不安': '😣'
-      };
+      const emojiMap = { '穿衣': '👕', '社交': '👀', '情绪': '😢', '叫名字': '👂', '眼神': '🙈', '刻板': '🔄', '抗拒': '👕', '哭闹': '😢', '躲避': '🙈', '不安': '😣' };
       for (const [key, emoji] of Object.entries(emojiMap)) {
         if (title.includes(key)) return emoji;
       }
       return '👕';
     }
 
-    // 效果徽章映射
-    // 效果徽章映射（API返回emoji字段，需要映射到rating）
     function getEffectBadge(emoji) {
-      const map = {
-        '😊': { rating: 'good', emoji: '😊', label: '顺利', class: 'good' },
-        '😐': { rating: 'neutral', emoji: '😐', label: '一般', class: 'neutral' },
-        '😣': { rating: 'bad', emoji: '😣', label: '有点难', class: 'bad' }
-      };
+      const map = { '😊': { rating: 'good', emoji: '😊', label: '顺利', class: 'good' }, '😐': { rating: 'neutral', emoji: '😐', label: '一般', class: 'neutral' }, '😣': { rating: 'bad', emoji: '😣', label: '有点难', class: 'bad' } };
       return map[emoji] || map['😐'];
     }
 
-    // 格式化日期
     function formatRecordDate(dateStr) {
       if (!dateStr) return '未知时间';
       const date = new Date(dateStr);
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      
+      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
       const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       const timeStr = `${hours}:${minutes}`;
-      
-      if (targetDate.getTime() === today.getTime()) {
-        return `今天 ${timeStr}`;
-      } else if (targetDate.getTime() === yesterday.getTime()) {
-        return `昨天 ${timeStr}`;
-      } else {
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        return `${month}-${day} ${timeStr}`;
-      }
+      if (targetDate.getTime() === today.getTime()) { return `今天 ${timeStr}`; }
+      else if (targetDate.getTime() === yesterday.getTime()) { return `昨天 ${timeStr}`; }
+      else { const month = (date.getMonth() + 1).toString().padStart(2, '0'); const day = date.getDate().toString().padStart(2, '0'); return `${month}-${day} ${timeStr}`; }
     }
 
-    // 按月份分组
     function groupByMonth(records) {
       const groups = {};
-      
       records.forEach(record => {
         const date = new Date(record.created_at || record.date || record.completed_at);
         const key = `${date.getFullYear()}年${date.getMonth() + 1}月`;
-        
-        if (!groups[key]) {
-          groups[key] = [];
-        }
+        if (!groups[key]) { groups[key] = []; }
         groups[key].push(record);
       });
-      
       return groups;
     }
 
-    // 加载历史记录
     async function loadHistory() {
       const scenarioId = getScenarioId();
-      if (!scenarioId) {
-        showError('缺少情境ID');
-        return;
-      }
+      if (!scenarioId) { showError('缺少情境ID'); return; }
 
       try {
         const response = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}`);
-        if (!response.ok) {
-          throw new Error(`请求失败: ${response.status}`);
-        }
-        
+        if (!response.ok) { throw new Error(`请求失败: ${response.status}`); }
+
         const result = await response.json();
-        // API返回结构: {data: {scenario: {...}, ...}}
         const data = result.data?.scenario || result.data;
-        
-        // 加载历史记录
+
         const historyResponse = await fetch(`${getApiBase()}/api/scenarios/${scenarioId}/history`);
-        if (!historyResponse.ok) {
-          throw new Error(`请求失败: ${historyResponse.status}`);
-        }
-        
+        if (!historyResponse.ok) { throw new Error(`请求失败: ${historyResponse.status}`); }
+
         const historyResult = await historyResponse.json();
         const records = (historyResult.data && historyResult.data.history) || [];
-        
         renderHistory(data, records);
-        
+
       } catch (error) {
         console.error('加载历史记录失败:', error);
         showError('加载失败，请重试');
       }
     }
 
-    // 渲染历史记录
     function renderHistory(scenarioData, records) {
       const pageContent = document.getElementById('pageContent');
-      
-      // 统计数据
-      const stats = {
-        good: 0,
-        neutral: 0,
-        bad: 0
-      };
-      
+
+      const stats = { good: 0, neutral: 0, bad: 0 };
       records.forEach(record => {
         const e = record.emoji;
         if (e === '😊') stats.good++;
@@ -364,18 +285,11 @@
         else if (e === '😣') stats.bad++;
       });
 
-      // 按月份分组
       const monthGroups = groupByMonth(records);
-      
+
       let historyContent = '';
-      
       if (records.length === 0) {
-        historyContent = `
-          <div class="empty-state">
-            <div class="icon">📝</div>
-            <div class="text">还没有训练记录</div>
-          </div>
-        `;
+        historyContent = `<div class="empty-state"><div class="icon">📝</div><div class="text">还没有训练记录</div></div>`;
       } else {
         historyContent = Object.entries(monthGroups).map(([month, monthRecords]) => `
           <div class="month-group">
@@ -386,19 +300,12 @@
                 const dateStr = formatRecordDate(record.created_at || record.date || '');
                 const detail = record.text || record.analysis || '';
                 const trainCount = record.train_count || '1~2次';
-                
+
                 return `
                   <div class="record-card">
                     <div class="record-header">
-                      <div class="record-day">
-                        <span class="day-num">第${record.day}天</span>
-                        <span class="date">${dateStr}</span>
-                      </div>
-                      <div class="record-effect">
-                        <div class="effect-badge ${effect.class}">
-                          <span>${effect.emoji}</span><span>${effect.label}</span>
-                        </div>
-                      </div>
+                      <div class="record-day"><span class="day-num">第${record.day}天</span><span class="date">${dateStr}</span></div>
+                      <div class="record-effect"><div class="effect-badge ${effect.class}"><span>${effect.emoji}</span><span>${effect.label}</span></div></div>
                     </div>
                     ${detail ? `<div class="record-body">${detail}</div>` : ''}
                     <div class="record-footer">
@@ -413,61 +320,47 @@
         `).join('');
       }
 
-      // 获取标题和emoji（兼容不同字段名），去掉"任务包_XX_"前缀
       const rawTitle = scenarioData.scenario_title || scenarioData.package_name || '未命名情境';
       const scenarioTitle = rawTitle.replace(/^任务包_\d+_/, '');
       const scenarioEmoji = scenarioData.scenario_emoji || getEmojiFromTitle(scenarioTitle);
 
       pageContent.innerHTML = `
-        <!-- 情境标题栏 -->
         <div class="scenario-bar">
-          <span class="emoji">${scenarioEmoji}</span>
+          <div class="emoji">${scenarioEmoji}</div>
           <span class="name">${scenarioTitle}</span>
           <span class="meta">共${records.length}次训练</span>
         </div>
 
-        <!-- 统计数据 -->
         <div class="stats-row">
-          <div class="stat-item">
-            <div class="num green">${stats.good}</div>
-            <div class="label">顺利</div>
-          </div>
-          <div class="stat-item">
-            <div class="num orange">${stats.neutral}</div>
-            <div class="label">一般</div>
-          </div>
-          <div class="stat-item">
-            <div class="num red">${stats.bad}</div>
-            <div class="label">有点难</div>
-          </div>
+          <div class="stat-item"><div class="num green">${stats.good}</div><div class="label">顺利</div></div>
+          <div class="stat-item"><div class="num orange">${stats.neutral}</div><div class="label">一般</div></div>
+          <div class="stat-item"><div class="num red">${stats.bad}</div><div class="label">有点难</div></div>
         </div>
 
-        <!-- 月份分组记录 -->
         ${historyContent}
       `;
 
       document.getElementById('loadingState').style.display = 'none';
     }
 
-    // 显示错误
     function showError(message) {
       const pageContent = document.getElementById('pageContent');
       pageContent.innerHTML = `
         <div style="text-align:center;padding:60px 20px;">
-          <div style="font-size:48px;margin-bottom:16px;">😢</div>
-          <div style="color:#6B6B6B;font-size:15px;">${message}</div>
+          <div style="font-size:56px;margin-bottom:16px;">😢</div>
+          <div style="color:var(--text-secondary);font-size:15px;">${message}</div>
           <div style="margin-top:20px;">
-            <button onclick="loadHistory()" style="background:#7CB342;color:#fff;border:none;padding:12px 24px;border-radius:20px;cursor:pointer;">重试</button>
+            <button onclick="loadHistory()" style="background:var(--accent);color:#fff;border:none;padding:14px 28px;border-radius:14px;cursor:pointer;font-size:14px;font-weight:600;">重试</button>
           </div>
         </div>
       `;
       document.getElementById('loadingState').style.display = 'none';
     }
 
-    // 更新返回按钮跳转
-    document.addEventListener('DOMContentLoaded', () => {
-      loadHistory();
-    });
+    document.addEventListener('DOMContentLoaded', () => { loadHistory(); });
   </script>
+<!-- 鎰忚鍙嶉鎮诞鐞?-->
+<script src="/static/components/feedback-widget.js"></script>
 </body>
 </html>
+

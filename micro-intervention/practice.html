@@ -1,13 +1,32 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>孩子练习 - 微干预</title>
   <style>
+    /* Professional Design System Override */
+    :root {
+      --accent: #34C759;
+      --accent-dark: #2DBE48;
+      --accent-light: #E8F8ED;
+      --bg: #F8F9FA;
+      --card: #FFFFFF;
+      --text-primary: #1D1D1F;
+      --text-secondary: #6E6E73;
+      --text-hint: #AEAEB2;
+      --border: #E5E5E7;
+      --blue: #007AFF;
+      --blue-light: #E5F2FF;
+      --orange: #FF9500;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
       background: #F7F4F0;
       min-height: 100vh;
       display: flex;
@@ -25,10 +44,11 @@
       overflow: hidden;
       border: 1px solid #E8E4E0;
     }
-    /* 状态栏 */
+
+    /* Status Bar */
     .status-bar {
       height: 44px;
-      background: #2D2D2D;
+      background: #1A1A1A;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -38,88 +58,179 @@
       font-weight: 600;
     }
     .status-bar .icons { display: flex; gap: 6px; }
-    /* 顶部导航 */
+
+    /* Header */
     .header {
       display: flex;
       align-items: center;
-      padding: 12px 16px;
-      background: #FFFFFF;
-      border-bottom: 1px solid #E8E4E0;
+      justify-content: center;
+      padding: 16px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
     }
-    .header-title {
-      flex: 1; text-align: center;
-      font-size: 17px; font-weight: 600; color: #2D2D2D;
+    .header-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+
+    /* Page Content */
+    .page-content { padding: 20px 16px 80px; }
+
+    /* Coming Soon Card */
+    .coming-soon-card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
     }
-    /* 页面主体 */
-    .page-content {
-      padding: 0 0 24px;
-    }
-    /* 状态 */
-    .coming-soon {
+    .coming-soon-icon {
+      width: 88px;
+      height: 88px;
+      background: var(--blue-light);
+      border-radius: 24px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 100px 40px 60px;
-      text-align: center;
-    }
-    .coming-icon {
-      width: 88px; height: 88px;
-      background: #E8F5E9;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
       font-size: 44px;
+    }
+    .coming-soon-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .coming-soon-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
       margin-bottom: 24px;
     }
-    .coming-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #2D2D2D;
+    .coming-soon-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Features Preview */
+    .features-preview { margin-top: 24px; }
+    .feature-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
       margin-bottom: 10px;
+      box-shadow: var(--shadow);
     }
-    .coming-desc {
-      font-size: 14px;
-      color: #6B6B6B;
-      line-height: 1.7;
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--bg);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
     }
-    /* Tab栏 */
+    .feature-info { flex: 1; }
+    .feature-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .feature-desc { font-size: 12px; color: var(--text-secondary); }
+    .feature-status {
+      background: var(--bg);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: var(--text-hint);
+    }
+
+    /* Tab Bar */
     .tab-bar {
       position: fixed;
       bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 480px;
       height: 64px;
-      background: #FFFFFF;
-      border-top: 1px solid #E8E4E0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-around;
       z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
     }
     .tab-item {
       flex: 1; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 4px;
-      color: #6B6B6B; font-size: 11px;
+      color: var(--text-secondary); font-size: 11px; font-weight: 500;
       cursor: pointer; transition: all 0.2s;
     }
-    .tab-item.active { color: #7CB342; font-weight: bold; }
+    .tab-item.active { color: var(--accent); font-weight: 600; }
     .tab-icon { font-size: 20px; }
   </style>
 </head>
 <body>
   <div class="phone-wrapper">
+    <!-- Status Bar -->
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="icons"><span>📶</span><span>🔋</span></div>
     </div>
+
+    <!-- Header -->
     <div class="header">
       <div class="header-title">孩子练习</div>
     </div>
+
+    <!-- Page Content -->
     <div class="page-content">
-      <div class="coming-soon">
-        <div class="coming-icon">🧒</div>
-        <div class="coming-title">正在开发中...</div>
-        <div class="coming-desc">孩子练习模块正在精心打磨中<br>敬请期待</div>
+      <!-- Coming Soon Card -->
+      <div class="coming-soon-card">
+        <div class="coming-soon-icon">🧒</div>
+        <div class="coming-soon-title">功能开发中</div>
+        <div class="coming-soon-desc">
+          孩子练习模块正在精心准备中<br>
+          将提供专属的练习游戏和互动内容
+        </div>
+        <div class="coming-soon-hint">🚧 敬请期待</div>
+      </div>
+
+      <!-- Features Preview -->
+      <div class="features-preview">
+        <div class="feature-item">
+          <div class="feature-icon">🎮</div>
+          <div class="feature-info">
+            <div class="feature-name">互动练习游戏</div>
+            <div class="feature-desc">专属孩子的练习游戏</div>
+          </div>
+          <div class="feature-status">开发中</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">⭐</div>
+          <div class="feature-info">
+            <div class="feature-name">能力提升追踪</div>
+            <div class="feature-desc">记录孩子每次进步</div>
+          </div>
+          <div class="feature-status">开发中</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🏆</div>
+          <div class="feature-info">
+            <div class="feature-name">成就徽章系统</div>
+            <div class="feature-desc">激励孩子持续练习</div>
+          </div>
+          <div class="feature-status">开发中</div>
+        </div>
       </div>
     </div>
+
+    <!-- Tab Bar -->
     <div class="tab-bar">
       <div class="tab-item" onclick="window.location.href='index.html'">
         <span class="tab-icon">👨‍👩‍👦</span>
@@ -135,5 +246,8 @@
       </div>
     </div>
   </div>
+<!-- 鎰忚鍙嶉鎮诞鐞?-->
+<script src="/static/components/feedback-widget.js"></script>
 </body>
 </html>
+
